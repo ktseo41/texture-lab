@@ -18,6 +18,8 @@ const DICT = {
     'title.share': '현재 설정을 URL로 복사',
     'title.saveJson': '프리셋 JSON 저장',
     'title.loadJson': '프리셋 JSON 불러오기',
+    'title.clearUpload': '업로드한 이미지 제거',
+    'toast.uploadCleared': '업로드 이미지를 제거했습니다',
 
     'preset.printGrunge': '① 프린트 그런지 (흑백 망점+CMY 플레이크)',
     'preset.grainGradient': '② 그레인 그라디언트 (노이즈 필름)',
@@ -88,6 +90,8 @@ const DICT = {
     'title.share': 'Copy current settings as URL',
     'title.saveJson': 'Save preset JSON',
     'title.loadJson': 'Load preset JSON',
+    'title.clearUpload': 'Remove uploaded image',
+    'toast.uploadCleared': 'Uploaded image removed',
 
     'preset.printGrunge': '① Print grunge (mono dots + CMY flecks)',
     'preset.grainGradient': '② Grain gradient (noisy film)',
@@ -158,6 +162,8 @@ const DICT = {
     'title.share': '現在の設定をURLとしてコピー',
     'title.saveJson': 'プリセットJSONを保存',
     'title.loadJson': 'プリセットJSONを読み込み',
+    'title.clearUpload': 'アップロード画像を削除',
+    'toast.uploadCleared': 'アップロード画像を削除しました',
 
     'preset.printGrunge': '① プリントグランジ（モノクロ網点＋CMYフレック）',
     'preset.grainGradient': '② グレイングラデーション（ノイズフィルム）',

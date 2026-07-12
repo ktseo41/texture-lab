@@ -5,7 +5,7 @@ import { DEFAULTS, PRESETS } from './state/params.js';
 import { readURL, scheduleURLUpdate, shareURL } from './state/url.js';
 import { exportPresetJSON, importPresetJSON } from './state/presetIO.js';
 import { render } from './engine/pipeline.js';
-import { setUploadedImage } from './engine/source.js';
+import { setUploadedImage, clearUploadedImage } from './engine/source.js';
 import { buildControls, syncUI, updateVisibility, relabelControls } from './ui/controls.js';
 import { t, initLang, setLang, getLang, applyStatic } from './i18n.js';
 
@@ -101,16 +101,27 @@ document.getElementById('jsonFile').addEventListener('change', async e => {
   e.target.value = '';
 });
 
-document.getElementById('upload').addEventListener('change', e => {
+const uploadInput = document.getElementById('upload');
+const clearUploadBtn = document.getElementById('clearUpload');
+uploadInput.addEventListener('change', e => {
   const f = e.target.files[0];
   if(!f) return;
   const img = new Image();
   img.onload = () => {
     setUploadedImage(img);
     P.srcMode = 'image';
+    clearUploadBtn.hidden = false;
     syncUI(P); updateVisibility(P); onParamChange();
   };
   img.src = URL.createObjectURL(f);
+});
+clearUploadBtn.addEventListener('click', () => {
+  clearUploadedImage();
+  uploadInput.value = '';
+  clearUploadBtn.hidden = true;
+  if(P.srcMode === 'image') P.srcMode = 'blobs';
+  syncUI(P); updateVisibility(P); onParamChange();
+  toast(t('toast.uploadCleared'));
 });
 
 /* ---------- language ---------- */

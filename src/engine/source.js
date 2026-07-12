@@ -10,6 +10,10 @@ export function setUploadedImage(img){
   uploadedImg = img;
   uploadId++;
 }
+export function clearUploadedImage(){
+  uploadedImg = null;
+  uploadId++;
+}
 export function hasUploadedImage(){ return !!uploadedImg; }
 
 export function sourceKey(P){
