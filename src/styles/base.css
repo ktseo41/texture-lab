@@ -172,3 +172,18 @@ input[type=range]::-moz-range-thumb{
 
 ::-webkit-scrollbar{ width:10px; }
 ::-webkit-scrollbar-thumb{ background:var(--scroll); }
+
+/* ---------- mobile: stack stage over panel ---------- */
+@media (max-width: 768px){
+  body{ flex-direction:column; height:100dvh; }
+  #stage{ flex:none; height:42dvh; padding:14px; }
+  #resizer{ display:none; }
+  #panel{
+    flex:1; min-height:0;
+    /* JS restores a saved desktop width inline — override it here */
+    width:auto !important; min-width:0; max-width:none;
+    border-top:var(--group-sep);
+  }
+  #masthead h1{ font-size:22px; }
+  input[type=file].file{ max-width:100%; }
+}
