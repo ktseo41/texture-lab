@@ -6,7 +6,8 @@ import { readURL, scheduleURLUpdate, shareURL } from './state/url.js';
 import { exportPresetJSON, importPresetJSON } from './state/presetIO.js';
 import { render } from './engine/pipeline.js';
 import { setUploadedImage } from './engine/source.js';
-import { buildControls, syncUI, updateVisibility } from './ui/controls.js';
+import { buildControls, syncUI, updateVisibility, relabelControls } from './ui/controls.js';
+import { t, initLang, setLang, getLang, applyStatic } from './i18n.js';
 
 let P = { ...DEFAULTS };
 
@@ -41,7 +42,9 @@ function onParamChange(){
 }
 
 /* ---------- controls ---------- */
+initLang();
 buildControls(() => P, onParamChange);
+applyStatic();
 
 /* ---------- presets ---------- */
 const presetSel = document.getElementById('preset');
@@ -78,9 +81,9 @@ document.getElementById('share').addEventListener('click', async () => {
   const url = shareURL(P);
   try{
     await navigator.clipboard.writeText(url);
-    toast('링크가 클립보드에 복사되었습니다');
+    toast(t('toast.link'));
   }catch{
-    toast('주소창의 URL을 복사하세요 (자동 복사 실패)');
+    toast(t('toast.linkFail'));
   }
 });
 
@@ -93,8 +96,8 @@ document.getElementById('jsonFile').addEventListener('change', async e => {
   try{
     P = await importPresetJSON(f);
     syncUI(P); updateVisibility(P); onParamChange();
-    toast('프리셋을 불러왔습니다');
-  }catch{ toast('JSON 파싱 실패'); }
+    toast(t('toast.preset'));
+  }catch{ toast(t('toast.jsonFail')); }
   e.target.value = '';
 });
 
@@ -110,18 +113,16 @@ document.getElementById('upload').addEventListener('change', e => {
   img.src = URL.createObjectURL(f);
 });
 
-/* ---------- theme ---------- */
-const themeBtns = [...document.querySelectorAll('#themeSwitch button')];
-function setTheme(t){
-  document.body.dataset.theme = t;
-  themeBtns.forEach(b => b.classList.toggle('on', b.dataset.t === t));
-  try{ localStorage.setItem('texlab-theme', t); }catch{}
+/* ---------- language ---------- */
+const langBtns = [...document.querySelectorAll('#langSwitch button')];
+function applyLang(l){
+  setLang(l);
+  langBtns.forEach(b => b.classList.toggle('on', b.dataset.lang === getLang()));
+  applyStatic();
+  relabelControls();
 }
-themeBtns.forEach(b => b.addEventListener('click', () => setTheme(b.dataset.t)));
-try{
-  const saved = localStorage.getItem('texlab-theme');
-  if(saved === 'brutal' || saved === 'instrument') setTheme(saved);
-}catch{}
+langBtns.forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
+applyLang(getLang());
 
 /* ---------- toast ---------- */
 let toastTimer = null;

@@ -5,66 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TEXTURE LAB — halftone / grain</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23111'/%3E%3Ccircle cx='5' cy='5' r='2.4' fill='%23f7d500'/%3E%3Ccircle cx='11' cy='5' r='1.7' fill='%2300adee'/%3E%3Ccircle cx='5' cy='11' r='1.7' fill='%23ec008c'/%3E%3Ccircle cx='11' cy='11' r='2.4' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap">
 </head>
 <body data-theme="brutal">
 
 <div id="stage">
   <canvas id="view"></canvas>
-  <div id="busy">RENDERING…</div>
+  <div id="busy" data-i18n="busy">RENDERING…</div>
 </div>
 
 <div id="panel">
   <header id="masthead">
     <h1>TEXTURE<br>LAB<span class="cursor">_</span></h1>
-    <p class="sub">CMYK HALFTONE · PRINT GRUNGE · GRAIN GRADIENT</p>
-    <div id="themeSwitch" role="tablist" aria-label="테마">
-      <button data-t="brutal" class="on">BRUTAL</button>
-      <button data-t="instrument">PANEL</button>
+    <p class="sub" data-i18n="app.sub">CMYK HALFTONE · PRINT GRUNGE · GRAIN GRADIENT</p>
+    <div id="langSwitch" role="tablist" aria-label="language">
+      <button data-lang="ko">한국어</button>
+      <button data-lang="en">EN</button>
+      <button data-lang="ja">日本語</button>
     </div>
   </header>
 
   <div class="toolbar">
-    <select id="preset" aria-label="프리셋"></select>
+    <select id="preset" aria-label="preset"></select>
     <div class="btnrow">
-      <button id="rndSeed" title="시드 랜덤화">SEED ⟳</button>
-      <button id="share" title="현재 설정을 URL로 복사">LINK</button>
-      <button id="saveJson" title="프리셋 JSON 저장">JSON↓</button>
-      <button id="loadJson" title="프리셋 JSON 불러오기">JSON↑</button>
+      <button id="rndSeed" data-i18n-title="title.rndSeed">SEED ⟳</button>
+      <button id="share" data-i18n-title="title.share">LINK</button>
+      <button id="saveJson" data-i18n-title="title.saveJson">JSON↓</button>
+      <button id="loadJson" data-i18n-title="title.loadJson">JSON↑</button>
       <button id="export" class="primary">PNG↓</button>
     </div>
     <input type="file" id="jsonFile" accept="application/json" hidden>
   </div>
 
   <details open>
-    <summary><span class="idx">01</span>캔버스 / 시드</summary>
+    <summary><span class="idx">01</span><span data-i18n="sec.canvas">캔버스 / 시드</span></summary>
     <div class="grp" id="g-canvas"></div>
   </details>
 
   <details open>
-    <summary><span class="idx">02</span>소스 (베이스 이미지)</summary>
+    <summary><span class="idx">02</span><span data-i18n="sec.source">소스 (베이스 이미지)</span></summary>
     <div class="grp" id="g-source"></div>
     <div class="grp">
-      <div class="row"><label>이미지 업로드</label><input type="file" id="upload" accept="image/*" class="file"></div>
+      <div class="row"><label data-i18n="upload">이미지 업로드</label><input type="file" id="upload" accept="image/*" class="file"></div>
     </div>
   </details>
 
   <details open>
-    <summary><span class="idx">03</span>할프톤 스크린</summary>
+    <summary><span class="idx">03</span><span data-i18n="sec.halftone">할프톤 스크린</span></summary>
     <div class="grp" id="g-halftone"></div>
     <div class="grp">
-      <div class="hint">채널별 스크린 각도와 판 어긋남 오프셋. 인쇄 표준: C=15° M=75° Y=0° K=45°</div>
+      <div class="hint" data-i18n="ch.hint">채널별 스크린 각도와 판 어긋남 오프셋. 인쇄 표준: C=15° M=75° Y=0° K=45°</div>
       <div class="chhead"><span></span><span>INK</span><span>ANG°</span><span>OFF-X</span><span>OFF-Y</span></div>
       <div id="channels"></div>
     </div>
   </details>
 
   <details open>
-    <summary><span class="idx">04</span>그런지 / 왜곡</summary>
+    <summary><span class="idx">04</span><span data-i18n="sec.grunge">그런지 / 왜곡</span></summary>
     <div class="grp" id="g-grunge"></div>
   </details>
 
   <details open>
-    <summary><span class="idx">05</span>그레인</summary>
+    <summary><span class="idx">05</span><span data-i18n="sec.grain">그레인</span></summary>
     <div class="grp" id="g-grain"></div>
   </details>
 
