@@ -48,9 +48,9 @@ applyStatic();
 
 /* ---------- presets ---------- */
 const presetSel = document.getElementById('preset');
-for(const name of Object.keys(PRESETS)){
+for(const id of Object.keys(PRESETS)){
   const o = document.createElement('option');
-  o.value = name; o.textContent = name;
+  o.value = id; o.textContent = t('preset.' + id);
   presetSel.appendChild(o);
 }
 function applyPreset(name){
@@ -120,6 +120,7 @@ function applyLang(l){
   langBtns.forEach(b => b.classList.toggle('on', b.dataset.lang === getLang()));
   applyStatic();
   relabelControls();
+  for(const o of presetSel.options) o.textContent = t('preset.' + o.value);
 }
 langBtns.forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
 applyLang(getLang());

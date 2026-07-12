@@ -19,6 +19,12 @@ const DICT = {
     'title.saveJson': '프리셋 JSON 저장',
     'title.loadJson': '프리셋 JSON 불러오기',
 
+    'preset.printGrunge': '① 프린트 그런지 (흑백 망점+CMY 플레이크)',
+    'preset.grainGradient': '② 그레인 그라디언트 (노이즈 필름)',
+    'preset.popGlitch': '③ 팝 할프톤 글리치 (CMYK 판 어긋남)',
+    'preset.cleanCmyk': '④ 클린 CMYK 할프톤',
+    'preset.newsprint': '⑤ 신문 인쇄 (거친 모노 망점)',
+
     'toast.link': '링크가 클립보드에 복사되었습니다',
     'toast.linkFail': '주소창의 URL을 복사하세요 (자동 복사 실패)',
     'toast.preset': '프리셋을 불러왔습니다',
@@ -83,6 +89,12 @@ const DICT = {
     'title.saveJson': 'Save preset JSON',
     'title.loadJson': 'Load preset JSON',
 
+    'preset.printGrunge': '① Print grunge (mono dots + CMY flecks)',
+    'preset.grainGradient': '② Grain gradient (noisy film)',
+    'preset.popGlitch': '③ Pop halftone glitch (CMYK misregistration)',
+    'preset.cleanCmyk': '④ Clean CMYK halftone',
+    'preset.newsprint': '⑤ Newsprint (rough mono dots)',
+
     'toast.link': 'Link copied to clipboard',
     'toast.linkFail': 'Copy the URL from the address bar (auto-copy failed)',
     'toast.preset': 'Preset loaded',
@@ -146,6 +158,12 @@ const DICT = {
     'title.share': '現在の設定をURLとしてコピー',
     'title.saveJson': 'プリセットJSONを保存',
     'title.loadJson': 'プリセットJSONを読み込み',
+
+    'preset.printGrunge': '① プリントグランジ（モノクロ網点＋CMYフレック）',
+    'preset.grainGradient': '② グレイングラデーション（ノイズフィルム）',
+    'preset.popGlitch': '③ ポップハーフトーングリッチ（CMYK版ズレ）',
+    'preset.cleanCmyk': '④ クリーンCMYKハーフトーン',
+    'preset.newsprint': '⑤ 新聞印刷（粗いモノクロ網点）',
 
     'toast.link': 'リンクをクリップボードにコピーしました',
     'toast.linkFail': 'アドレスバーのURLをコピーしてください（自動コピー失敗）',

@@ -37,7 +37,7 @@ BRUTAL 테마는 특정 실물 레퍼런스를 트레이싱한 것이 아니라,
 - 정적 HTML은 `data-i18n`(textContent) / `data-i18n-title`(title 속성)로 마킹, `applyStatic()`이 일괄 적용.
 - 동적 컨트롤은 `controls.js`가 생성 시 `t()`로 라벨링하고, 언어 전환 시 `relabelControls()`가 다시 쓴다.
 - 언어 결정: localStorage(`texlab-lang`) > `navigator.language`(ko/ja는 해당 언어, 그 외 en) > ko.
-- 미번역 잔여: 프리셋 이름(`params.js`의 PRESETS 키가 곧 표시명이자 식별자라 번역하면 URL/JSON 호환이 깨짐 — 분리하려면 id/표시명 구조 변경 필요).
+- 프리셋: `params.js`의 PRESETS 키를 표시명에서 안정적 id(`printGrunge` 등)로 분리하고, 표시명은 `preset.<id>` 키로 사전에서 가져온다. id는 select 값으로만 쓰이고 URL/JSON에는 저장되지 않는다.
 
 ## 4. 패널 리사이즈
 
