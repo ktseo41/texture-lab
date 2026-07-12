@@ -84,8 +84,10 @@ summary .idx{ color:var(--accent); font-family:var(--mono); }
 .row .val:hover{ background:var(--accent); }
 .row.dim .val{ cursor:default; }
 .row.dim .val:hover{ background:transparent; }
+/* same 46px footprint as .val so the slider doesn't jump while editing */
 .row .valedit{
-  flex:0 0 56px; width:56px; padding:1px 4px; text-align:right;
+  flex:0 0 46px; width:46px; min-width:0; max-width:46px; margin:0;
+  padding:1px 2px; text-align:right;
   font-family:var(--mono); font-size:11px; font-weight:600;
   background:var(--field-bg); color:var(--text); border:var(--field-border);
   -moz-appearance:textfield; appearance:textfield;
