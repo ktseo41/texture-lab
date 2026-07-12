@@ -142,6 +142,35 @@ export function buildControls(getP, onChange, getBaseline){
         inp.type = 'range'; inp.min = d.min; inp.max = d.max; inp.step = d.step;
         val = document.createElement('span'); val.className = 'val';
         row.appendChild(inp); row.appendChild(val);
+        // click the readout to type an exact value; looks like plain text until then
+        val.addEventListener('click', () => {
+          if(row.classList.contains('dim')) return;
+          const P = getP();
+          const ed = document.createElement('input');
+          ed.type = 'number'; ed.className = 'valedit';
+          ed.min = d.min; ed.max = d.max; ed.step = d.step;
+          ed.value = P[d.k];
+          val.replaceWith(ed);
+          ed.focus(); ed.select();
+          const commit = () => {
+            let v = +ed.value;
+            if(!Number.isFinite(v)) v = P[d.k];
+            v = Math.max(d.min, Math.min(d.max, v));
+            P[d.k] = v;
+            inp.value = v;
+            val.textContent = fmt(v);
+            ed.replaceWith(val);
+            onChange(d.k);
+          };
+          ed.addEventListener('blur', commit);
+          ed.addEventListener('keydown', e => {
+            if(e.key === 'Enter') ed.blur();
+            else if(e.key === 'Escape'){
+              ed.removeEventListener('blur', commit);
+              ed.replaceWith(val);
+            }
+          });
+        });
       } else if(d.t === 'number'){
         inp = document.createElement('input'); inp.type = 'number';
         row.appendChild(inp);
