@@ -27,6 +27,16 @@ export const UI = {
     {k:'srcBright', t:'range', min:-60, max:60, step:1},
     {k:'posterize', t:'range', min:0, max:12, step:1, hint:true},
   ],
+  'g-text': [
+    {k:'textOn', t:'check'},
+    {k:'text', t:'textarea', dim:p=>!p.textOn, hint:true},
+    {k:'textSize', t:'range', min:4, max:60, step:0.5, dim:p=>!p.textOn},
+    {k:'textX', t:'range', min:0, max:100, step:0.5, dim:p=>!p.textOn},
+    {k:'textY', t:'range', min:0, max:100, step:0.5, dim:p=>!p.textOn},
+    {k:'textColor', t:'color', dim:p=>!p.textOn},
+    {k:'textAlpha', t:'range', min:0, max:1, step:0.01, dim:p=>!p.textOn},
+    {k:'textCursor', t:'check', dim:p=>!p.textOn, hint:true},
+  ],
   'g-halftone': [
     {k:'htOn', t:'check'},
     {k:'cell', t:'range', min:2, max:30, step:0.5, dim:p=>!p.htOn},
@@ -69,7 +79,7 @@ const labeled = []; // {def, lab, hintEl, inp, rst}
 
 function readInput(d, inp){
   if(d.t === 'check') return inp.checked;
-  if(d.t === 'select' || d.t === 'color') return inp.value;
+  if(d.t === 'select' || d.t === 'color' || d.t === 'textarea') return inp.value;
   return +inp.value;
 }
 function fmt(v){
@@ -179,6 +189,9 @@ export function buildControls(getP, onChange, getBaseline){
         row.appendChild(inp);
       } else if(d.t === 'check'){
         inp = document.createElement('input'); inp.type = 'checkbox';
+        row.appendChild(inp);
+      } else if(d.t === 'textarea'){
+        inp = document.createElement('textarea'); inp.rows = 2;
         row.appendChild(inp);
       } else if(d.t === 'select'){
         inp = document.createElement('select');

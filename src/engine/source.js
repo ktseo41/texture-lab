@@ -16,11 +16,17 @@ export function clearUploadedImage(){
 }
 export function hasUploadedImage(){ return !!uploadedImg; }
 
+// bumped when webfonts finish loading so cached text renders with the real font
+let fontGen = 0;
+export function bumpFontGen(){ fontGen++; }
+
 export function sourceKey(P){
   return [P.width, P.height, P.seed, P.srcMode, P.srcBg, P.srcC1, P.srcC2, P.srcC3,
     P.srcC4, P.srcC5, P.blobColors,
     P.blobCount, P.blobScale, P.blobIrregular, P.blobSoft, P.gradAngle,
-    P.srcContrast, P.srcBright, P.posterize, uploadId].join('|');
+    P.srcContrast, P.srcBright, P.posterize,
+    P.textOn, P.text, P.textSize, P.textX, P.textY, P.textColor, P.textAlpha,
+    P.textCursor, fontGen, uploadId].join('|');
 }
 
 export function renderSource(P, srcCanvas){
@@ -103,5 +109,34 @@ export function renderSource(P, srcCanvas){
       }
     }
     ctx.putImageData(id, 0, 0);
+  }
+
+  // text — drawn last so contrast/posterize don't shift its color;
+  // downstream halftone/grain screens it into the pattern
+  if(P.textOn && P.text){
+    const lines = String(P.text).split('\n');
+    const px = P.textSize / 100 * h;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, Math.min(1, P.textAlpha));
+    ctx.font = `800 ${px}px "Pretendard Variable", Pretendard, sans-serif`;
+    if('letterSpacing' in ctx) ctx.letterSpacing = `${px * -0.03}px`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const lh = px * 0.98;
+    const cx = P.textX / 100 * w, cy = P.textY / 100 * h;
+    const y0 = cy - (lines.length - 1) * lh / 2;
+    ctx.fillStyle = P.textColor;
+    lines.forEach((ln, i) => ctx.fillText(ln, cx, y0 + i * lh));
+    if(P.textCursor){
+      const lastW = ctx.measureText(lines[lines.length - 1]).width;
+      const ux = cx + lastW / 2 + px * 0.05, uy = y0 + (lines.length - 1) * lh;
+      ctx.textAlign = 'left';
+      ctx.lineWidth = Math.max(1, px * 0.045);
+      ctx.strokeStyle = '#111111';
+      ctx.strokeText('_', ux, uy);
+      ctx.fillStyle = '#f7d500';
+      ctx.fillText('_', ux, uy);
+    }
+    ctx.restore();
   }
 }

@@ -105,6 +105,11 @@ summary .idx{ color:var(--accent); font-family:var(--mono); }
   background:var(--field-bg); border:var(--field-border);
 }
 .row select{ flex:1; }
+.row textarea{
+  flex:1; min-width:0; resize:vertical;
+  padding:4px 6px; font-family:var(--mono); font-size:11px;
+  background:var(--field-bg); color:var(--text); border:var(--field-border);
+}
 .row .rst{
   flex:none; width:20px; height:20px; padding:0;
   font-size:12px; line-height:1; font-family:var(--mono);

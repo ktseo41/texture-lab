@@ -5,7 +5,7 @@ import { DEFAULTS, PRESETS } from './state/params.js';
 import { readURL, scheduleURLUpdate, shareURL } from './state/url.js';
 import { exportPresetJSON, importPresetJSON } from './state/presetIO.js';
 import { render } from './engine/pipeline.js';
-import { setUploadedImage, clearUploadedImage } from './engine/source.js';
+import { setUploadedImage, clearUploadedImage, bumpFontGen } from './engine/source.js';
 import { buildControls, syncUI, updateVisibility, relabelControls, updateDirty } from './ui/controls.js';
 import { t, initLang, setLang, getLang, applyStatic } from './i18n.js';
 
@@ -35,6 +35,9 @@ function requestRender(){
     }, 0);
   });
 }
+
+// first render can race webfont loading — re-render text with the real font
+document.fonts.ready.then(() => { bumpFontGen(); requestRender(); });
 
 /* ---------- user presets (localStorage) ---------- */
 const USER_PRESET_KEY = 'texlab-userpresets';
