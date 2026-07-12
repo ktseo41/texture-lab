@@ -18,6 +18,7 @@ export function hasUploadedImage(){ return !!uploadedImg; }
 
 export function sourceKey(P){
   return [P.width, P.height, P.seed, P.srcMode, P.srcBg, P.srcC1, P.srcC2, P.srcC3,
+    P.srcC4, P.srcC5, P.blobColors,
     P.blobCount, P.blobScale, P.blobIrregular, P.blobSoft, P.gradAngle,
     P.srcContrast, P.srcBright, P.posterize, uploadId].join('|');
 }
@@ -51,7 +52,8 @@ export function renderSource(P, srcCanvas){
     lo.width = lw; lo.height = lh;
     const lctx = lo.getContext('2d');
     lctx.fillStyle = P.srcBg; lctx.fillRect(0, 0, lw, lh);
-    const cols = [P.srcC1, P.srcC2, P.srcC3];
+    const cols = [P.srcC1, P.srcC2, P.srcC3, P.srcC4, P.srcC5]
+      .slice(0, Math.max(1, Math.min(5, P.blobColors || 3)));
     const irr = P.blobIrregular;
     for(let i=0; i<P.blobCount; i++){
       const cx = rng()*lw, cy = rng()*lh;

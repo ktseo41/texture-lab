@@ -12,9 +12,12 @@ export const UI = {
   'g-source': [
     {k:'srcMode', t:'select', opts:['blobs','linear','image']},
     {k:'srcBg', t:'color', show:p=>p.srcMode!=='image'},
+    {k:'blobColors', t:'range', min:1, max:5, step:1, show:p=>p.srcMode==='blobs'},
     {k:'srcC1', t:'color', show:p=>p.srcMode!=='image'},
-    {k:'srcC2', t:'color', show:p=>p.srcMode!=='image'},
-    {k:'srcC3', t:'color', show:p=>p.srcMode==='blobs'},
+    {k:'srcC2', t:'color', show:p=>p.srcMode!=='image' && (p.srcMode!=='blobs' || p.blobColors>=2)},
+    {k:'srcC3', t:'color', show:p=>p.srcMode==='blobs' && p.blobColors>=3},
+    {k:'srcC4', t:'color', show:p=>p.srcMode==='blobs' && p.blobColors>=4},
+    {k:'srcC5', t:'color', show:p=>p.srcMode==='blobs' && p.blobColors>=5},
     {k:'gradAngle', t:'range', min:0, max:360, step:1, show:p=>p.srcMode==='linear'},
     {k:'blobCount', t:'range', min:1, max:16, step:1, show:p=>p.srcMode==='blobs'},
     {k:'blobScale', t:'range', min:10, max:150, step:1, show:p=>p.srcMode==='blobs'},
@@ -147,7 +150,7 @@ export function buildControls(getP, onChange){
         const P = getP();
         P[d.k] = readInput(d, inp);
         if(val) val.textContent = fmt(P[d.k]);
-        if(d.k === 'srcMode') updateVisibility(P);
+        if(d.k === 'srcMode' || d.k === 'blobColors') updateVisibility(P);
         onChange(d.k);
       });
     }

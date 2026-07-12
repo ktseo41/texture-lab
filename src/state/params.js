@@ -7,6 +7,8 @@ export const DEFAULTS = {
   srcMode: "blobs",          // blobs | linear | image
   srcBg: "#9a9a92",
   srcC1: "#2b2b2b", srcC2: "#e8e4d8", srcC3: "#555550",
+  srcC4: "#8a4a3a", srcC5: "#3a5a6a",
+  blobColors: 3,
   blobCount: 6, blobScale: 55, blobIrregular: 0.5, blobSoft: 30,
   gradAngle: 45,
   srcContrast: 0, srcBright: 0, posterize: 0,
