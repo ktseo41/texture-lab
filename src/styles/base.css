@@ -87,7 +87,8 @@ summary .idx{ color:var(--accent); font-family:var(--mono); }
 /* same 46px footprint as .val so the slider doesn't jump while editing */
 .row .valedit{
   flex:0 0 46px; width:46px; min-width:0; max-width:46px; margin:0;
-  padding:1px 2px; text-align:right;
+  height:20px; /* = range input height, keeps row height fixed */
+  padding:0 2px; text-align:right;
   font-family:var(--mono); font-size:11px; font-weight:600;
   background:var(--field-bg); color:var(--text); border:var(--field-border);
   -moz-appearance:textfield; appearance:textfield;
