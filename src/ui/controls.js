@@ -3,6 +3,10 @@
 
 import { t } from '../i18n.js';
 
+// dev-only controls: shown on localhost or with ?debug=1 (params still work via URL/JSON)
+const DEBUG = location.hostname === 'localhost'
+  || new URLSearchParams(location.search).has('debug');
+
 export const UI = {
   'g-canvas': [
     {k:'width',  t:'number'},
@@ -35,7 +39,7 @@ export const UI = {
     {k:'textY', t:'range', min:0, max:100, step:0.5, dim:p=>!p.textOn},
     {k:'textColor', t:'color', dim:p=>!p.textOn},
     {k:'textAlpha', t:'range', min:0, max:1, step:0.01, dim:p=>!p.textOn},
-    {k:'textCursor', t:'check', dim:p=>!p.textOn, hint:true},
+    {k:'textCursor', t:'check', dim:p=>!p.textOn, hint:true, show:()=>DEBUG},
   ],
   'g-halftone': [
     {k:'htOn', t:'check'},

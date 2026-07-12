@@ -120,16 +120,18 @@ export function renderSource(P, srcCanvas){
     ctx.globalAlpha = Math.max(0, Math.min(1, P.textAlpha));
     ctx.font = `800 ${px}px "Pretendard Variable", Pretendard, sans-serif`;
     if('letterSpacing' in ctx) ctx.letterSpacing = `${px * -0.03}px`;
-    ctx.textAlign = 'center';
+    // block centered at textX/textY, lines left-aligned inside it (masthead style)
+    ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     const lh = px * 0.98;
-    const cx = P.textX / 100 * w, cy = P.textY / 100 * h;
-    const y0 = cy - (lines.length - 1) * lh / 2;
+    const maxW = Math.max(...lines.map(ln => ctx.measureText(ln).width));
+    const x0 = P.textX / 100 * w - maxW / 2;
+    const y0 = P.textY / 100 * h - (lines.length - 1) * lh / 2;
     ctx.fillStyle = P.textColor;
-    lines.forEach((ln, i) => ctx.fillText(ln, cx, y0 + i * lh));
+    lines.forEach((ln, i) => ctx.fillText(ln, x0, y0 + i * lh));
     if(P.textCursor){
       const lastW = ctx.measureText(lines[lines.length - 1]).width;
-      const ux = cx + lastW / 2 + px * 0.05, uy = y0 + (lines.length - 1) * lh;
+      const ux = x0 + lastW + px * 0.05, uy = y0 + (lines.length - 1) * lh;
       ctx.textAlign = 'left';
       ctx.lineWidth = Math.max(1, px * 0.045);
       ctx.strokeStyle = '#111111';
