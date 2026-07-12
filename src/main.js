@@ -43,8 +43,21 @@ function baselineOf(){
 
 function onParamChange(){
   scheduleURLUpdate(P);
+  updateVisibility(P);
   updateDirty(P, baselineOf());
   requestRender();
+}
+
+// fold sections whose feature is inactive in the current state
+function updateSections(P){
+  const open = {
+    'g-halftone': P.htOn,
+    'g-grunge': P.turbAmt > 0 || P.fleck > 0 || P.dust > 0,
+    'g-grain': P.grainAmt > 0,
+  };
+  for(const [gid, on] of Object.entries(open)){
+    document.getElementById(gid).closest('details').open = on;
+  }
 }
 
 /* ---------- controls ---------- */
@@ -62,7 +75,7 @@ for(const id of Object.keys(PRESETS)){
 function applyPreset(name){
   P = { ...DEFAULTS, ...(PRESETS[name] || {}) };
   syncUI(P);
-  updateVisibility(P);
+  updateSections(P);
   onParamChange();
 }
 presetSel.addEventListener('change', () => applyPreset(presetSel.value));
@@ -109,7 +122,7 @@ document.getElementById('jsonFile').addEventListener('change', async e => {
   if(!f) return;
   try{
     P = await importPresetJSON(f);
-    syncUI(P); updateVisibility(P); onParamChange();
+    syncUI(P); updateSections(P); onParamChange();
     toast(t('toast.preset'));
   }catch{ toast(t('toast.jsonFail')); }
   e.target.value = '';
@@ -192,7 +205,7 @@ function toast(msg){
 const fromURL = readURL();
 if(fromURL && Object.keys(fromURL).length){
   P = { ...DEFAULTS, ...fromURL };
-  syncUI(P); updateVisibility(P); updateDirty(P, baselineOf()); requestRender();
+  syncUI(P); updateSections(P); updateVisibility(P); updateDirty(P, baselineOf()); requestRender();
 } else {
   presetSel.value = Object.keys(PRESETS)[0];
   applyPreset(presetSel.value);

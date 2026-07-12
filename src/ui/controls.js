@@ -29,32 +29,32 @@ export const UI = {
   ],
   'g-halftone': [
     {k:'htOn', t:'check'},
-    {k:'cell', t:'range', min:2, max:30, step:0.5},
-    {k:'shape', t:'select', opts:['circle','diamond','square','ellipse','line']},
-    {k:'dotGain', t:'range', min:0.3, max:2.5, step:0.01, hint:true},
-    {k:'dotMax', t:'range', min:0.5, max:2.2, step:0.01},
-    {k:'dotMin', t:'range', min:0, max:0.3, step:0.005},
-    {k:'sizeJitter', t:'range', min:0, max:1, step:0.01, hint:true},
-    {k:'posJitter', t:'range', min:0, max:1, step:0.01},
-    {k:'roughness', t:'range', min:0, max:1, step:0.01, hint:true},
-    {k:'inkOpacity', t:'range', min:0.3, max:1, step:0.01},
-    {k:'misreg', t:'range', min:0, max:20, step:0.5, hint:true},
-    {k:'paper', t:'color'},
-    {k:'cInk', t:'color'},
-    {k:'mInk', t:'color'},
-    {k:'yInk', t:'color'},
-    {k:'kInk', t:'color'},
+    {k:'cell', t:'range', min:2, max:30, step:0.5, dim:p=>!p.htOn},
+    {k:'shape', t:'select', opts:['circle','diamond','square','ellipse','line'], dim:p=>!p.htOn},
+    {k:'dotGain', t:'range', min:0.3, max:2.5, step:0.01, hint:true, dim:p=>!p.htOn},
+    {k:'dotMax', t:'range', min:0.5, max:2.2, step:0.01, dim:p=>!p.htOn},
+    {k:'dotMin', t:'range', min:0, max:0.3, step:0.005, dim:p=>!p.htOn},
+    {k:'sizeJitter', t:'range', min:0, max:1, step:0.01, hint:true, dim:p=>!p.htOn},
+    {k:'posJitter', t:'range', min:0, max:1, step:0.01, dim:p=>!p.htOn},
+    {k:'roughness', t:'range', min:0, max:1, step:0.01, hint:true, dim:p=>!p.htOn},
+    {k:'inkOpacity', t:'range', min:0.3, max:1, step:0.01, dim:p=>!p.htOn},
+    {k:'misreg', t:'range', min:0, max:20, step:0.5, hint:true, dim:p=>!p.htOn},
+    {k:'paper', t:'color', dim:p=>!p.htOn},
+    {k:'cInk', t:'color', dim:p=>!p.htOn},
+    {k:'mInk', t:'color', dim:p=>!p.htOn},
+    {k:'yInk', t:'color', dim:p=>!p.htOn},
+    {k:'kInk', t:'color', dim:p=>!p.htOn},
   ],
   'g-grunge': [
     {k:'turbAmt', t:'range', min:0, max:60, step:0.5, hint:true},
-    {k:'turbScale', t:'range', min:5, max:200, step:1},
+    {k:'turbScale', t:'range', min:5, max:200, step:1, dim:p=>p.turbAmt===0},
     {k:'fleck', t:'range', min:0, max:1, step:0.01, hint:true},
     {k:'dust', t:'range', min:0, max:1, step:0.01, hint:true},
   ],
   'g-grain': [
     {k:'grainAmt', t:'range', min:0, max:1, step:0.005},
-    {k:'grainSize', t:'range', min:1, max:6, step:1},
-    {k:'grainChroma', t:'range', min:0, max:1, step:0.01, hint:true},
+    {k:'grainSize', t:'range', min:1, max:6, step:1, dim:p=>p.grainAmt===0},
+    {k:'grainChroma', t:'range', min:0, max:1, step:0.01, hint:true, dim:p=>p.grainAmt===0},
   ],
 };
 
@@ -64,6 +64,7 @@ export const CHANNELS = [
 
 const inputs = {};
 const visRules = [];
+const dimRules = []; // {fn, els} — dim + disable inputs when fn(P) is true
 const labeled = []; // {def, lab, hintEl, inp, rst}
 
 function readInput(d, inp){
@@ -79,6 +80,13 @@ export function updateVisibility(P){
   for(const r of visRules){
     const on = r.fn(P);
     for(const el of r.els) el.style.display = on ? '' : 'none';
+  }
+  for(const r of dimRules){
+    const dim = r.fn(P);
+    for(const el of r.els){
+      el.classList.toggle('dim', dim);
+      for(const i of el.querySelectorAll('input, select')) i.disabled = dim;
+    }
   }
 }
 
@@ -160,7 +168,6 @@ export function buildControls(getP, onChange, getBaseline){
         const P = getP();
         P[d.k] = getBaseline()[d.k];
         setInputValue(inputs[d.k], P[d.k]);
-        if(d.k === 'srcMode' || d.k === 'blobColors') updateVisibility(P);
         onChange(d.k);
       });
       row.appendChild(rst);
@@ -173,11 +180,11 @@ export function buildControls(getP, onChange, getBaseline){
       }
       labeled.push({ def: d, lab, hintEl, inp, rst });
       if(d.show) visRules.push({ fn: d.show, els: hintEl ? [row, hintEl] : [row] });
+      if(d.dim) dimRules.push({ fn: d.dim, els: hintEl ? [row, hintEl] : [row] });
       inp.addEventListener('input', () => {
         const P = getP();
         P[d.k] = readInput(d, inp);
         if(val) val.textContent = fmt(P[d.k]);
-        if(d.k === 'srcMode' || d.k === 'blobColors') updateVisibility(P);
         onChange(d.k);
       });
     }
@@ -207,4 +214,6 @@ export function buildControls(getP, onChange, getBaseline){
     bind(ox, ch.id + 'OffX', 'number');
     bind(oy, ch.id + 'OffY', 'number');
   }
+  // whole channel block (hint + grid) follows the halftone master toggle
+  dimRules.push({ fn: p => !p.htOn, els: [chBox.closest('.grp')] });
 }
