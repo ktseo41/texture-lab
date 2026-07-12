@@ -58,7 +58,7 @@ export function renderSource(P, srcCanvas){
     for(let i=0; i<P.blobCount; i++){
       const cx = rng()*lw, cy = rng()*lh;
       const r = (0.25 + rng()*0.9) * Math.min(lw,lh) * P.blobScale/100;
-      const [cr_, cg_, cb_] = hex2rgb(cols[i % 3]);
+      const [cr_, cg_, cb_] = hex2rgb(cols[i % cols.length]);
       const sub = 1 + Math.round(irr * 5 * (0.5 + rng()*0.5));
       for(let s2=0; s2<sub; s2++){
         let bx = cx, by = cy, br = r;
