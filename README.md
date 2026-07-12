@@ -1,42 +1,62 @@
-# TEXTURE LAB
+# TEXTURE LAB_
 
-CMYK 할프톤 · 프린트 그런지 · 그레인 그라디언트 텍스처를 파라미터로 생성/변형하는 웹 도구.
+**English** | [한국어](README.ko.md)
 
-## 개발
+![TEXTURE LAB — CMYK halftone texture with ghosted text](docs/readme-hero.png)
+
+A parametric web tool for generating **CMYK halftone · print grunge · grain gradient** textures — plus a text layer that gets screened into the pattern along with everything else.
+
+**Live demo → https://ktseo41.github.io/texture-lab/**
+
+## Features
+
+- **CMYK halftone screening** — per-channel angles/offsets, 5 dot shapes, dot gain, jitter, edge roughness, plate misregistration
+- **Source stage** — organic color blobs (1–5 colors), linear gradient, or your own uploaded image
+- **Print grunge** — turbulence warp, CMY flecks, dust/speckle
+- **Film grain** — mono or chroma noise, sized 1–6 px
+- **Text layer** — drawn into the source, so it halftones/grains together with the artwork instead of sitting on top
+- **Deterministic seeds** — the same seed always renders the same texture
+- **Shareable URLs** — the whole state is encoded into `?p=`, so any texture is a link
+- **Presets** — 5 factory presets + save your own (localStorage / JSON export)
+- **PNG export** at any canvas size, Korean/English/Japanese UI
+
+## Development
 
 ```bash
 npm install
 npm run dev      # http://localhost:5173
-npm run build    # dist/ 에 정적 빌드
-npm run preview  # 빌드 결과 미리보기
+npm run build    # static build in dist/
+npm run preview  # preview the build
 ```
 
-## 구조
+## Architecture
 
 ```
 src/
-  engine/          렌더 엔진 (UI와 완전 분리)
-    random.js      시드 해시 · value noise — 같은 시드는 항상 같은 결과
-    source.js      소스 스테이지: 컬러 블롭 / 리니어 그라디언트 / 업로드 이미지
-    halftone.js    CMYK 분판 + 채널별 회전 스크린. 채널 레이어 캐시,
-                   판 어긋남은 합성 시점에 적용되어 재래스터 없음
-    grain.js       필름 그레인(노이즈 캐시) + 먼지/잉크 플레이크
-    pipeline.js    source → halftone → speckle → grain 오케스트레이션
+  engine/          render engine (fully separated from the UI)
+    random.js      seeded hash · value noise — same seed, same result
+    source.js      source stage: color blobs / linear gradient / uploaded image / text
+    halftone.js    CMYK separation + per-channel rotated screens. Channel layers
+                   are cached; misregistration is applied at composite time,
+                   so no re-raster
+    grain.js       film grain (noise cache) + dust / ink flecks
+    pipeline.js    source → halftone → speckle → grain orchestration
   state/
-    params.js      DEFAULTS + 팩토리 프리셋
-    url.js         기본값 대비 diff를 base64url로 ?p=에 인코딩 (공유 링크)
-    presetIO.js    프리셋 JSON 내보내기/가져오기
+    params.js      DEFAULTS + factory presets
+    url.js         diff-from-defaults encoded to ?p= as base64url (share links)
+    presetIO.js    preset JSON export / import
   ui/
-    controls.js    선언적 컨트롤 정의 → DOM, 조건부 표시
+    controls.js    declarative control defs → DOM, conditional visibility
   styles/
-    base.css       구조/레이아웃 (테마 무관)
-    themes.css     BRUTAL(브루탈리즘) / PANEL(계기판) 두 테마
+    base.css       structure / layout (theme-agnostic)
+    themes.css     BRUTAL (brutalism) / PANEL (instrument panel) themes
 ```
 
-## 배포
+Planned text-layer extensions (alignment options, box wrapping, rotation, fonts) are documented in [docs/text-layer-roadmap.md](docs/text-layer-roadmap.md).
 
-`npm run build` 후 `dist/`를 아무 정적 호스팅에 올리면 끝 (base가 `./`라
-GitHub Pages 서브패스에서도 동작).
+## Deploying
 
-- GitHub Pages: repo 푸시 → Settings → Pages → GitHub Actions(Vite 템플릿)
-- Cloudflare Pages / Netlify / Vercel: repo 연결, build command `npm run build`, output `dist`
+Run `npm run build` and drop `dist/` on any static host (base is `./`, so GitHub Pages subpaths work).
+
+- GitHub Pages: this repo auto-deploys on push to `main` via GitHub Actions
+- Cloudflare Pages / Netlify / Vercel: connect the repo, build command `npm run build`, output `dist`

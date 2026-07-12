@@ -14,7 +14,7 @@ export const DEFAULTS = {
   srcContrast: 0, srcBright: 0, posterize: 0,
   // text (drawn into the source, so it screens into dots like everything else)
   textOn: false, text: "TEXTURE\nLAB", textSize: 18,
-  textX: 50, textY: 50, textColor: "#111111", textAlpha: 1.0, textCursor: true,
+  textX: 50, textY: 50, textColor: "#111111", textAlpha: 1.0, textCursor: false,
   // halftone
   htOn: true,
   cell: 6, shape: "circle", dotGain: 1.0, dotMax: 1.45, dotMin: 0.02,
