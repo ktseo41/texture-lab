@@ -36,13 +36,27 @@ function requestRender(){
   });
 }
 
+/* ---------- user presets (localStorage) ---------- */
+const USER_PRESET_KEY = 'texlab-userpresets';
+function loadUserPresets(){
+  try{ return JSON.parse(localStorage.getItem(USER_PRESET_KEY)) || {}; }catch{ return {}; }
+}
+function saveUserPresets(u){
+  try{ localStorage.setItem(USER_PRESET_KEY, JSON.stringify(u)); }catch{}
+}
+// select option values: factory = preset id, user = 'u:' + name
+function resolvePreset(v){
+  if(v && v.startsWith('u:')) return loadUserPresets()[v.slice(2)] || {};
+  return PRESETS[v] || {};
+}
+
 function baselineOf(){
   const sel = document.getElementById('preset');
-  return { ...DEFAULTS, ...(PRESETS[sel.value] || {}) };
+  return { ...DEFAULTS, ...resolvePreset(sel.value) };
 }
 
 function onParamChange(){
-  scheduleURLUpdate(P);
+  scheduleURLUpdate(P, document.getElementById('preset').value);
   updateVisibility(P);
   updateDirty(P, baselineOf());
   requestRender();
@@ -67,18 +81,78 @@ applyStatic();
 
 /* ---------- presets ---------- */
 const presetSel = document.getElementById('preset');
-for(const id of Object.keys(PRESETS)){
-  const o = document.createElement('option');
-  o.value = id; o.textContent = t('preset.' + id);
-  presetSel.appendChild(o);
+const savePresetBtn = document.getElementById('savePreset');
+const delPresetBtn = document.getElementById('delPreset');
+
+function populatePresetSelect(){
+  const cur = presetSel.value;
+  presetSel.innerHTML = '';
+  const factory = document.createElement('optgroup');
+  factory.label = t('presets.factory');
+  for(const id of Object.keys(PRESETS)){
+    const o = document.createElement('option');
+    o.value = id; o.textContent = t('preset.' + id);
+    factory.appendChild(o);
+  }
+  presetSel.appendChild(factory);
+  const names = Object.keys(loadUserPresets());
+  if(names.length){
+    const mine = document.createElement('optgroup');
+    mine.label = t('presets.user');
+    for(const n of names){
+      const o = document.createElement('option');
+      o.value = 'u:' + n; o.textContent = n;
+      mine.appendChild(o);
+    }
+    presetSel.appendChild(mine);
+  }
+  if(cur && [...presetSel.options].some(o => o.value === cur)) presetSel.value = cur;
+  delPresetBtn.hidden = !presetSel.value.startsWith('u:');
 }
-function applyPreset(name){
-  P = { ...DEFAULTS, ...(PRESETS[name] || {}) };
+populatePresetSelect();
+
+function applyPreset(v){
+  P = { ...DEFAULTS, ...resolvePreset(v) };
   syncUI(P);
   updateSections(P);
   onParamChange();
 }
-presetSel.addEventListener('change', () => applyPreset(presetSel.value));
+presetSel.addEventListener('change', () => {
+  delPresetBtn.hidden = !presetSel.value.startsWith('u:');
+  applyPreset(presetSel.value);
+});
+
+savePresetBtn.addEventListener('click', () => {
+  const name = (prompt(t('prompt.presetName')) || '').trim();
+  if(!name) return;
+  const u = loadUserPresets();
+  const d = {};
+  for(const k of Object.keys(DEFAULTS)) if(P[k] !== DEFAULTS[k]) d[k] = P[k];
+  u[name] = d;
+  saveUserPresets(u);
+  presetSel.value = '';
+  populatePresetSelect();
+  presetSel.value = 'u:' + name;
+  delPresetBtn.hidden = false;
+  scheduleURLUpdate(P, presetSel.value);
+  updateDirty(P, baselineOf());
+  toast(t('toast.presetSaved'));
+});
+
+delPresetBtn.addEventListener('click', () => {
+  const v = presetSel.value;
+  if(!v.startsWith('u:')) return;
+  const name = v.slice(2);
+  if(!confirm(t('confirm.presetDelete').replace('{name}', name))) return;
+  const u = loadUserPresets();
+  delete u[name];
+  saveUserPresets(u);
+  presetSel.value = Object.keys(PRESETS)[0];
+  populatePresetSelect();
+  scheduleURLUpdate(P, presetSel.value);
+  updateDirty(P, baselineOf());
+  toast(t('toast.presetDeleted'));
+});
 
 /* ---------- toolbar ---------- */
 document.getElementById('reset').addEventListener('click', () => {
@@ -105,7 +179,7 @@ document.getElementById('export').addEventListener('click', () => {
 });
 
 document.getElementById('share').addEventListener('click', async () => {
-  const url = shareURL(P);
+  const url = shareURL(P, presetSel.value);
   try{
     await navigator.clipboard.writeText(url);
     toast(t('toast.link'));
@@ -158,7 +232,7 @@ function applyLang(l){
   langBtns.forEach(b => b.classList.toggle('on', b.dataset.lang === getLang()));
   applyStatic();
   relabelControls();
-  for(const o of presetSel.options) o.textContent = t('preset.' + o.value);
+  populatePresetSelect();
 }
 langBtns.forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
 applyLang(getLang());
@@ -203,8 +277,12 @@ function toast(msg){
 
 /* ---------- init: URL state > first preset ---------- */
 const fromURL = readURL();
-if(fromURL && Object.keys(fromURL).length){
-  P = { ...DEFAULTS, ...fromURL };
+if(fromURL && (Object.keys(fromURL.params).length || fromURL.ps)){
+  P = { ...DEFAULTS, ...fromURL.params };
+  if(fromURL.ps && [...presetSel.options].some(o => o.value === fromURL.ps)){
+    presetSel.value = fromURL.ps;
+    delPresetBtn.hidden = !fromURL.ps.startsWith('u:');
+  }
   syncUI(P); updateSections(P); updateVisibility(P); updateDirty(P, baselineOf()); requestRender();
 } else {
   presetSel.value = Object.keys(PRESETS)[0];

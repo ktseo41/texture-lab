@@ -19,8 +19,11 @@ function b64urlDecode(str){
   return decodeURIComponent(escape(atob(str.replace(/-/g, '+').replace(/_/g, '/'))));
 }
 
-export function encodeState(P){
+// ps = selected preset id ('printGrunge' | 'u:<name>'), kept so a reload /
+// shared link restores the preset selection (reset baseline) as well
+export function encodeState(P, ps){
   const d = diffFromDefaults(P);
+  if(ps) d.ps = ps;
   return Object.keys(d).length ? b64urlEncode(JSON.stringify(d)) : '';
 }
 
@@ -31,25 +34,27 @@ export function readURL(){
     const d = JSON.parse(b64urlDecode(q));
     // only accept known keys with matching types
     const out = {};
+    let ps = null;
     for(const [k, v] of Object.entries(d)){
-      if(k in DEFAULTS && typeof v === typeof DEFAULTS[k]) out[k] = v;
+      if(k === 'ps' && typeof v === 'string') ps = v;
+      else if(k in DEFAULTS && typeof v === typeof DEFAULTS[k]) out[k] = v;
     }
-    return out;
+    return { params: out, ps };
   }catch{ return null; }
 }
 
 let urlTimer = null;
-export function scheduleURLUpdate(P){
+export function scheduleURLUpdate(P, ps){
   clearTimeout(urlTimer);
   urlTimer = setTimeout(() => {
-    const enc = encodeState(P);
+    const enc = encodeState(P, ps);
     const url = enc ? `${location.pathname}?p=${enc}` : location.pathname;
     history.replaceState(null, '', url);
   }, 300);
 }
 
-export function shareURL(P){
-  const enc = encodeState(P);
+export function shareURL(P, ps){
+  const enc = encodeState(P, ps);
   const url = enc ? `${location.pathname}?p=${enc}` : location.pathname;
   history.replaceState(null, '', url);
   return location.href;

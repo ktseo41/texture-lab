@@ -30,7 +30,11 @@
   </header>
 
   <div class="toolbar">
-    <select id="preset" aria-label="preset"></select>
+    <div class="presetrow">
+      <select id="preset" aria-label="preset"></select>
+      <button id="savePreset" data-i18n-title="title.savePreset">SAVE</button>
+      <button id="delPreset" data-i18n-title="title.delPreset" hidden>DEL</button>
+    </div>
     <div class="btnrow">
       <button id="reset" data-i18n-title="title.reset">RESET</button>
       <button id="rndSeed" data-i18n-title="title.rndSeed">SEED ⟳</button>
