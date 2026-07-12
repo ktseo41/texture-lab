@@ -6,7 +6,7 @@ import { readURL, scheduleURLUpdate, shareURL } from './state/url.js';
 import { exportPresetJSON, importPresetJSON } from './state/presetIO.js';
 import { render } from './engine/pipeline.js';
 import { setUploadedImage, clearUploadedImage } from './engine/source.js';
-import { buildControls, syncUI, updateVisibility, relabelControls } from './ui/controls.js';
+import { buildControls, syncUI, updateVisibility, relabelControls, updateDirty } from './ui/controls.js';
 import { t, initLang, setLang, getLang, applyStatic } from './i18n.js';
 
 let P = { ...DEFAULTS };
@@ -36,14 +36,20 @@ function requestRender(){
   });
 }
 
+function baselineOf(){
+  const sel = document.getElementById('preset');
+  return { ...DEFAULTS, ...(PRESETS[sel.value] || {}) };
+}
+
 function onParamChange(){
   scheduleURLUpdate(P);
+  updateDirty(P, baselineOf());
   requestRender();
 }
 
 /* ---------- controls ---------- */
 initLang();
-buildControls(() => P, onParamChange);
+buildControls(() => P, onParamChange, baselineOf);
 applyStatic();
 
 /* ---------- presets ---------- */
@@ -62,6 +68,14 @@ function applyPreset(name){
 presetSel.addEventListener('change', () => applyPreset(presetSel.value));
 
 /* ---------- toolbar ---------- */
+document.getElementById('reset').addEventListener('click', () => {
+  clearUploadedImage();
+  uploadInput.value = '';
+  clearUploadBtn.hidden = true;
+  applyPreset(presetSel.value);
+  toast(t('toast.reset'));
+});
+
 document.getElementById('rndSeed').addEventListener('click', () => {
   P.seed = 1 + Math.floor(Math.random() * 99999);
   syncUI(P); onParamChange();
@@ -178,7 +192,7 @@ function toast(msg){
 const fromURL = readURL();
 if(fromURL && Object.keys(fromURL).length){
   P = { ...DEFAULTS, ...fromURL };
-  syncUI(P); updateVisibility(P); requestRender();
+  syncUI(P); updateVisibility(P); updateDirty(P, baselineOf()); requestRender();
 } else {
   presetSel.value = Object.keys(PRESETS)[0];
   applyPreset(presetSel.value);

@@ -64,7 +64,7 @@ export const CHANNELS = [
 
 const inputs = {};
 const visRules = [];
-const labeled = []; // {def, lab, hintEl, inp}
+const labeled = []; // {def, lab, hintEl, inp, rst}
 
 function readInput(d, inp){
   if(d.t === 'check') return inp.checked;
@@ -96,14 +96,30 @@ export function relabelControls(){
   for(const it of labeled){
     it.lab.textContent = t(it.def.k);
     if(it.hintEl) it.hintEl.textContent = t('hint.' + it.def.k);
+    if(it.rst) it.rst.title = t('title.rstOne');
     if(it.def.t === 'select'){
       for(const o of it.inp.options) o.textContent = t(`opt.${it.def.k}.${o.value}`);
     }
   }
 }
 
+// mark rows whose value differs from the baseline (current preset + defaults)
+export function updateDirty(P, baseline){
+  for(const it of labeled){
+    if(!it.rst) continue;
+    it.rst.style.visibility = P[it.def.k] !== baseline[it.def.k] ? 'visible' : 'hidden';
+  }
+}
+
+function setInputValue(o, v){
+  if(o.def.t === 'check') o.inp.checked = !!v;
+  else o.inp.value = v;
+  if(o.val) o.val.textContent = fmt(v);
+}
+
 // getP: () => current params object   onChange: (key) => void
-export function buildControls(getP, onChange){
+// getBaseline: () => reference values for per-param reset (preset + defaults)
+export function buildControls(getP, onChange, getBaseline){
   for(const [gid, defs] of Object.entries(UI)){
     const grp = document.getElementById(gid);
     for(const d of defs){
@@ -137,6 +153,17 @@ export function buildControls(getP, onChange){
         row.appendChild(inp);
       }
       inputs[d.k] = { inp, val, def: d };
+      const rst = document.createElement('button');
+      rst.type = 'button'; rst.className = 'rst'; rst.textContent = '↺';
+      rst.title = t('title.rstOne'); rst.style.visibility = 'hidden';
+      rst.addEventListener('click', () => {
+        const P = getP();
+        P[d.k] = getBaseline()[d.k];
+        setInputValue(inputs[d.k], P[d.k]);
+        if(d.k === 'srcMode' || d.k === 'blobColors') updateVisibility(P);
+        onChange(d.k);
+      });
+      row.appendChild(rst);
       grp.appendChild(row);
       let hintEl = null;
       if(d.hint){
@@ -144,7 +171,7 @@ export function buildControls(getP, onChange){
         hintEl.textContent = t('hint.' + d.k);
         grp.appendChild(hintEl);
       }
-      labeled.push({ def: d, lab, hintEl, inp });
+      labeled.push({ def: d, lab, hintEl, inp, rst });
       if(d.show) visRules.push({ fn: d.show, els: hintEl ? [row, hintEl] : [row] });
       inp.addEventListener('input', () => {
         const P = getP();

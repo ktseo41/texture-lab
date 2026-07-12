@@ -87,6 +87,10 @@ summary .idx{ color:var(--accent); font-family:var(--mono); }
   background:var(--field-bg); border:var(--field-border);
 }
 .row select{ flex:1; }
+.row .rst{
+  flex:none; width:20px; height:20px; padding:0;
+  font-size:12px; line-height:1; font-family:var(--mono);
+}
 .row input[type=checkbox]{ width:15px; height:15px; accent-color:var(--accent); }
 
 .hint{ font-family:var(--font); font-size:11px; font-weight:500; line-height:1.55; color:var(--dim); margin-top:-4px; opacity:.9; }

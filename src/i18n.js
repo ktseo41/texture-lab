@@ -20,6 +20,9 @@ const DICT = {
     'title.loadJson': '프리셋 JSON 불러오기',
     'title.clearUpload': '업로드한 이미지 제거',
     'toast.uploadCleared': '업로드 이미지를 제거했습니다',
+    'title.reset': '현재 프리셋 기본값으로 전체 리셋',
+    'title.rstOne': '기본값으로 리셋',
+    'toast.reset': '프리셋 기본값으로 리셋했습니다',
 
     'preset.printGrunge': '① 프린트 그런지 (흑백 망점+CMY 플레이크)',
     'preset.grainGradient': '② 그레인 그라디언트 (노이즈 필름)',
@@ -94,6 +97,9 @@ const DICT = {
     'title.loadJson': 'Load preset JSON',
     'title.clearUpload': 'Remove uploaded image',
     'toast.uploadCleared': 'Uploaded image removed',
+    'title.reset': 'Reset everything to the current preset',
+    'title.rstOne': 'Reset to default',
+    'toast.reset': 'Reset to preset defaults',
 
     'preset.printGrunge': '① Print grunge (mono dots + CMY flecks)',
     'preset.grainGradient': '② Grain gradient (noisy film)',
@@ -168,6 +174,9 @@ const DICT = {
     'title.loadJson': 'プリセットJSONを読み込み',
     'title.clearUpload': 'アップロード画像を削除',
     'toast.uploadCleared': 'アップロード画像を削除しました',
+    'title.reset': '現在のプリセット既定値に全体リセット',
+    'title.rstOne': '既定値に戻す',
+    'toast.reset': 'プリセット既定値にリセットしました',
 
     'preset.printGrunge': '① プリントグランジ（モノクロ網点＋CMYフレック）',
     'preset.grainGradient': '② グレイングラデーション（ノイズフィルム）',
