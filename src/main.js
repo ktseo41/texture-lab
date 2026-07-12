@@ -124,6 +124,33 @@ function applyLang(l){
 langBtns.forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
 applyLang(getLang());
 
+/* ---------- panel resize ---------- */
+const panel = document.getElementById('panel');
+const resizer = document.getElementById('resizer');
+try{
+  const w = +localStorage.getItem('texlab-panelw');
+  if(w >= 280 && w <= 640) panel.style.width = w + 'px';
+}catch{}
+resizer.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  resizer.setPointerCapture(e.pointerId);
+  resizer.classList.add('dragging');
+  const startX = e.clientX, startW = panel.offsetWidth;
+  const onMove = ev => {
+    const w = Math.max(280, Math.min(640, startW + (startX - ev.clientX)));
+    panel.style.width = w + 'px';
+  };
+  const onUp = ev => {
+    resizer.classList.remove('dragging');
+    resizer.releasePointerCapture(ev.pointerId);
+    resizer.removeEventListener('pointermove', onMove);
+    resizer.removeEventListener('pointerup', onUp);
+    try{ localStorage.setItem('texlab-panelw', panel.offsetWidth); }catch{}
+  };
+  resizer.addEventListener('pointermove', onMove);
+  resizer.addEventListener('pointerup', onUp);
+});
+
 /* ---------- toast ---------- */
 let toastTimer = null;
 function toast(msg){

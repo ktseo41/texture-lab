@@ -22,9 +22,15 @@ body{
 }
 #busy.on{ opacity:1; }
 
+/* ---------- resizer ---------- */
+#resizer{
+  flex:none; width:7px; cursor:col-resize;
+  position:relative; z-index:5; touch-action:none;
+}
+
 /* ---------- panel ---------- */
 #panel{
-  width:360px; min-width:360px; overflow-y:auto;
+  width:360px; min-width:280px; max-width:640px; overflow-y:auto;
   background:var(--panel); display:flex; flex-direction:column;
 }
 #masthead{ padding:18px 18px 10px; position:relative; }
