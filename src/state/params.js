@@ -11,9 +11,6 @@ export const DEFAULTS = {
   blobColors: 3,
   blobCount: 6, blobScale: 55, blobIrregular: 0.5, blobSoft: 30,
   gradAngle: 45,
-  gradStops: 3,            // linear: how many of srcC1..C5 to use
-  gradCX: 0, gradCY: 0,    // linear: start point, % of canvas
-  gradLen: 100,            // linear: travel length, % of the diagonal (clamps after)
   srcContrast: 0, srcBright: 0, posterize: 0,
   // halftone
   htOn: true,

@@ -19,8 +19,7 @@ export function hasUploadedImage(){ return !!uploadedImg; }
 export function sourceKey(P){
   return [P.width, P.height, P.seed, P.srcMode, P.srcBg, P.srcC1, P.srcC2, P.srcC3,
     P.srcC4, P.srcC5, P.blobColors,
-    P.blobCount, P.blobScale, P.blobIrregular, P.blobSoft,
-    P.gradAngle, P.gradStops, P.gradCX, P.gradCY, P.gradLen,
+    P.blobCount, P.blobScale, P.blobIrregular, P.blobSoft, P.gradAngle,
     P.srcContrast, P.srcBright, P.posterize, uploadId].join('|');
 }
 
@@ -36,16 +35,14 @@ export function renderSource(P, srcCanvas){
     if(ir > cr){ dh = h; dw = h*ir; } else { dw = w; dh = w/ir; }
     ctx.drawImage(uploadedImg, (w-dw)/2, (h-dh)/2, dw, dh);
   } else if(P.srcMode === 'linear'){
-    // start point + angle + length; the gradient clamps to its end colors
-    // beyond the segment, so a short run "stops" mid-canvas
     const a = P.gradAngle * Math.PI / 180;
-    const len = Math.max(1, (P.gradLen ?? 100) / 100 * Math.hypot(w, h));
-    const x0 = (P.gradCX ?? 0) / 100 * w;
-    const y0 = (P.gradCY ?? 0) / 100 * h;
-    const g = ctx.createLinearGradient(x0, y0, x0 + Math.cos(a)*len, y0 + Math.sin(a)*len);
-    const n = Math.max(2, Math.min(5, P.gradStops ?? 3));
-    const cols = [P.srcC1, P.srcC2, P.srcC3, P.srcC4, P.srcC5].slice(0, n);
-    cols.forEach((c, i) => g.addColorStop(i / (n - 1), c));
+    const rl = (Math.abs(Math.cos(a))*w + Math.abs(Math.sin(a))*h) / 2;
+    const g = ctx.createLinearGradient(
+      w/2 - Math.cos(a)*rl, h/2 - Math.sin(a)*rl,
+      w/2 + Math.cos(a)*rl, h/2 + Math.sin(a)*rl);
+    g.addColorStop(0, P.srcC2);
+    g.addColorStop(0.5, P.srcC1);
+    g.addColorStop(1, P.srcBg);
     ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
   } else {
     // organic blobs: clusters of sub-blobs on a low-res canvas, upscaled + blurred
