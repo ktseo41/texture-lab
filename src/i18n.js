@@ -97,6 +97,8 @@ const DICT = {
     'hint.fgDispersion': 'RGB 채널을 조금씩 다르게 굴절시켜 프리즘 무지갯빛',
     'fgFrost': '프로스트 블러 px',
     'hint.fgFrost': '유리 뒤 이미지를 흐리는 반투명 유리 느낌',
+    'fgFade': '라인 페이드',
+    'hint.fgFade': '조명 불균일 — 경계 라인이 길이 방향으로 밝아졌다 사라졌다 함',
 
     'turbAmt': '터뷸런스 강도 px',
     'hint.turbAmt': '샘플 좌표를 노이즈로 비틀어 물결/스캔 왜곡',
@@ -205,6 +207,8 @@ const DICT = {
     'hint.fgDispersion': 'Refracts RGB slightly differently — prismatic rainbow fringe',
     'fgFrost': 'Frost blur px',
     'hint.fgFrost': 'Blurs the image behind the glass — frosted translucency',
+    'fgFade': 'Line fade',
+    'hint.fgFade': 'Uneven lighting — boundary lines swell and vanish along their length',
 
     'turbAmt': 'Turbulence amount px',
     'hint.turbAmt': 'Warps sample coordinates with noise — ripple / scan distortion',
@@ -313,6 +317,8 @@ const DICT = {
     'hint.fgDispersion': 'RGBを僅かに別々に屈折させ、プリズム風の虹色フリンジに',
     'fgFrost': 'フロストブラー px',
     'hint.fgFrost': 'ガラス背後の画像をぼかす、すりガラスの半透明感',
+    'fgFade': 'ラインフェード',
+    'hint.fgFade': '照明ムラ — 境界ラインが長さ方向に膨らんだり消えたりする',
 
     'turbAmt': 'タービュランス強度 px',
     'hint.turbAmt': 'サンプル座標をノイズで歪ませ、波／スキャン風の歪みに',

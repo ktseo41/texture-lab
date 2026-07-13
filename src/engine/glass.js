@@ -13,6 +13,16 @@ function noise1(x, seed){
   return hash3(i, 0, seed)*(1-s) + hash3(i+1, 0, seed)*s;
 }
 
+// smooth 2D value noise in [0,1)
+function vnoise(x, y, seed){
+  const xi = Math.floor(x), yi = Math.floor(y);
+  const xf = x - xi, yf = y - yi;
+  const sx = xf*xf*(3-2*xf), sy = yf*yf*(3-2*yf);
+  const a = hash3(xi, yi, seed), b = hash3(xi+1, yi, seed);
+  const c = hash3(xi, yi+1, seed), d = hash3(xi+1, yi+1, seed);
+  return a + (b-a)*sx + (c-a)*sy + (a-b-c+d)*sx*sy;
+}
+
 export function applyFractalGlass(P, ctx, w, h){
   const width = Math.max(4, P.fgWidth);
   const irr = P.fgIrregular;
@@ -58,10 +68,20 @@ export function applyFractalGlass(P, ctx, w, h){
   const disp = P.fgDispersion;
   const chScale = [1 - disp*0.16, 1, 1 + disp*0.16];
 
+  // uneven lighting: the boundary hairlines swell and vanish along their
+  // length instead of running uniformly edge to edge
+  const fade = P.fgFade;
+
   for(let y=0; y<h; y++){
     const ro = y*w*4;
     for(let x=0; x<w; x++){
-      const base = off[x], sh = shade[x];
+      const base = off[x];
+      let sh = shade[x];
+      if(fade > 0){
+        let m = 1 + fade * ((vnoise(x/(width*2.5), y/240, seed+53) - 0.5) * 3.2 - 0.35);
+        m = m < 0 ? 0 : m > 1.4 ? 1.4 : m;
+        sh *= m;
+      }
       const di = ro + x*4;
       for(let c=0; c<3; c++){
         let sx = x + base * chScale[c];

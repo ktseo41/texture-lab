@@ -67,6 +67,7 @@ export const UI = {
     {k:'fgShade', t:'range', min:0, max:1, step:0.01, dim:p=>!p.fgOn},
     {k:'fgDispersion', t:'range', min:0, max:1, step:0.01, hint:true, dim:p=>!p.fgOn},
     {k:'fgFrost', t:'range', min:0, max:30, step:0.5, hint:true, dim:p=>!p.fgOn},
+    {k:'fgFade', t:'range', min:0, max:1, step:0.01, hint:true, dim:p=>!p.fgOn},
   ],
   'g-grunge': [
     {k:'turbAmt', t:'range', min:0, max:60, step:0.5, hint:true},
