@@ -70,16 +70,34 @@ export function applyFractalGlass(P, ctx, w, h){
   const chScale = [1 - disp*0.16, 1, 1 + disp*0.16];
 
   // uneven lighting: the boundary hairlines swell and vanish along their
-  // length instead of running uniformly edge to edge
+  // length instead of running uniformly edge to edge. The fade noise is
+  // low-frequency, so it's precomputed on a coarse grid and bilinearly
+  // sampled per pixel instead of calling vnoise w×h times.
   const fade = P.fgFade;
+  const FSTEP = 4;
+  let ff = null, fgw = 0;
+  if(fade > 0){
+    fgw = Math.ceil(w / FSTEP) + 2;
+    const fgh = Math.ceil(h / FSTEP) + 2;
+    ff = new Float32Array(fgw * fgh);
+    for(let j=0; j<fgh; j++)
+      for(let i=0; i<fgw; i++)
+        ff[j*fgw + i] = vnoise(i*FSTEP/(width*2.5), j*FSTEP/240, seed+53);
+  }
 
   for(let y=0; y<h; y++){
     const ro = y*w*4;
+    const fy = y / FSTEP, yi = fy|0, fv = fy - yi;
+    const r0 = yi*fgw, r1 = r0 + fgw;
     for(let x=0; x<w; x++){
       const base = off[x];
       let sh = shade[x];
-      if(fade > 0){
-        let m = 1 + fade * ((vnoise(x/(width*2.5), y/240, seed+53) - 0.5) * 3.2 - 0.35);
+      if(ff){
+        const fx = x / FSTEP, xi = fx|0, fu = fx - xi;
+        const a = ff[r0+xi], b = ff[r0+xi+1];
+        const c = ff[r1+xi], d = ff[r1+xi+1];
+        const nv = (a + (b-a)*fu) * (1-fv) + (c + (d-c)*fu) * fv;
+        let m = 1 + fade * ((nv - 0.5) * 3.2 - 0.35);
         m = m < 0 ? 0 : m > 1.4 ? 1.4 : m;
         sh *= m;
       }

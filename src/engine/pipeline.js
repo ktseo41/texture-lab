@@ -8,6 +8,8 @@ import { applyFractalGlass } from './glass.js';
 
 export const srcCanvas = document.createElement('canvas');
 const srcCache = { key: '', data: null };
+const baseCache = { key: '', cv: null };    // source + halftone composite
+const glassCache = { key: '', cv: null };   // base + fractal glass
 
 function getSource(P){
   const key = sourceKey(P);
@@ -19,12 +21,22 @@ function getSource(P){
   return { data: srcCache.data, key: srcCache.key };
 }
 
-export function render(P, view){
-  const w = P.width, h = P.height;
-  view.width = w; view.height = h;
-  const ctx = view.getContext('2d');
+// stage 1: source + halftone composite, re-rendered only when its params change
+function getBase(P, src, w, h){
+  const key = !P.htOn
+    ? 'plain‖' + src.key + '‖' + w + ',' + h
+    : src.key + '‖' + [w, h, P.seed, P.paper, P.inkOpacity, P.misreg,
+        P.cell, P.shape, P.dotGain, P.dotMax, P.dotMin,
+        P.sizeJitter, P.posJitter, P.roughness, P.turbAmt, P.turbScale,
+        P.cOn, P.cAng, P.cOffX, P.cOffY, P.cInk,
+        P.mOn, P.mAng, P.mOffX, P.mOffY, P.mInk,
+        P.yOn, P.yAng, P.yOffX, P.yOffY, P.yInk,
+        P.kOn, P.kAng, P.kOffX, P.kOffY, P.kInk].join(',');
+  if(key === baseCache.key) return baseCache;
 
-  const src = getSource(P);
+  const cv = baseCache.cv || document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  const ctx = cv.getContext('2d');
 
   if(!P.htOn){
     ctx.drawImage(srcCanvas, 0, 0);
@@ -51,7 +63,36 @@ export function render(P, view){
     ctx.globalAlpha = 1;
   }
 
-  if(P.fgOn) applyFractalGlass(P, ctx, w, h);
+  Object.assign(baseCache, { key, cv });
+  return baseCache;
+}
+
+// stage 2: fractal glass over the base, re-applied only when glass params change
+function getGlass(P, base, w, h){
+  const key = base.key + '‖' + [P.seed, P.fgWidth, P.fgIrregular, P.fgFrost,
+    P.fgRefract, P.fgShade, P.fgDispersion, P.fgFade].join(',');
+  if(key === glassCache.key) return glassCache;
+
+  const cv = glassCache.cv || document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  const ctx = cv.getContext('2d');
+  ctx.drawImage(base.cv, 0, 0);
+  applyFractalGlass(P, ctx, w, h);
+
+  Object.assign(glassCache, { key, cv });
+  return glassCache;
+}
+
+export function render(P, view){
+  const w = P.width, h = P.height;
+  view.width = w; view.height = h;
+  const ctx = view.getContext('2d');
+
+  const src = getSource(P);
+  const base = getBase(P, src, w, h);
+  const stage = P.fgOn ? getGlass(P, base, w, h) : base;
+
+  ctx.drawImage(stage.cv, 0, 0);
   drawSpeckles(P, ctx, w, h);
   if(P.grainAmt > 0) applyGrain(P, ctx, w, h);
 }
