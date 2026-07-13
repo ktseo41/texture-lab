@@ -78,13 +78,13 @@ export const PRESETS = {
     grainAmt:0.1, grainChroma:0.05,
   },
   fractalGlass: {
-    seed: 5,
-    srcMode:"linear", gradAngle:165,
-    srcBg:"#4d5cae", srcC1:"#9aa2ce", srcC2:"#f4eeda",
+    seed: 87113,
+    srcBg:"#5667c8", srcC1:"#9aa2ce", srcC2:"#d8d1ba", srcC3:"#dadaa9",
+    blobIrregular:0.34, blobSoft:39,
     srcContrast:35, posterize:5,
     htOn:false,
-    fgOn:true, fgWidth:30, fgIrregular:0.5, fgRefract:170,
-    fgShade:0.5, fgDispersion:0.35, fgFrost:5, fgFade:0.7,
+    fgOn:true, fgWidth:32, fgIrregular:0, fgRefract:143,
+    fgShade:0.34, fgDispersion:0.46, fgFrost:23.5, fgFade:1,
     grainAmt:0.06,
   },
 };
