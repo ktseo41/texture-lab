@@ -69,6 +69,7 @@ function onParamChange(){
 function updateSections(P){
   const open = {
     'g-halftone': P.htOn,
+    'g-glass': P.fgOn,
     'g-grunge': P.turbAmt > 0 || P.fleck > 0 || P.dust > 0,
     'g-grain': P.grainAmt > 0,
   };

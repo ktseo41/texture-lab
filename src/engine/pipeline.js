@@ -4,6 +4,7 @@ import { hash3 } from './random.js';
 import { renderSource, sourceKey } from './source.js';
 import { getChannelLayer, CH_MARGIN } from './halftone.js';
 import { applyGrain, drawSpeckles } from './grain.js';
+import { applyFractalGlass } from './glass.js';
 
 export const srcCanvas = document.createElement('canvas');
 const srcCache = { key: '', data: null };
@@ -50,6 +51,7 @@ export function render(P, view){
     ctx.globalAlpha = 1;
   }
 
+  if(P.fgOn) applyFractalGlass(P, ctx, w, h);
   drawSpeckles(P, ctx, w, h);
   if(P.grainAmt > 0) applyGrain(P, ctx, w, h);
 }

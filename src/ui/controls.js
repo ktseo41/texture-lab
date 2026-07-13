@@ -59,6 +59,15 @@ export const UI = {
     {k:'yInk', t:'color', dim:p=>!p.htOn},
     {k:'kInk', t:'color', dim:p=>!p.htOn},
   ],
+  'g-glass': [
+    {k:'fgOn', t:'check'},
+    {k:'fgWidth', t:'range', min:6, max:120, step:1, dim:p=>!p.fgOn},
+    {k:'fgIrregular', t:'range', min:0, max:1, step:0.01, hint:true, dim:p=>!p.fgOn},
+    {k:'fgRefract', t:'range', min:0, max:250, step:1, hint:true, dim:p=>!p.fgOn},
+    {k:'fgShade', t:'range', min:0, max:1, step:0.01, dim:p=>!p.fgOn},
+    {k:'fgDispersion', t:'range', min:0, max:1, step:0.01, hint:true, dim:p=>!p.fgOn},
+    {k:'fgFrost', t:'range', min:0, max:30, step:0.5, hint:true, dim:p=>!p.fgOn},
+  ],
   'g-grunge': [
     {k:'turbAmt', t:'range', min:0, max:60, step:0.5, hint:true},
     {k:'turbScale', t:'range', min:5, max:200, step:1, dim:p=>p.turbAmt===0},

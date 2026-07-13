@@ -25,6 +25,9 @@ export const DEFAULTS = {
   cOffX: 0, cOffY: 0, mOffX: 0, mOffY: 0, yOffX: 0, yOffY: 0, kOffX: 0, kOffY: 0,
   misreg: 0,
   cInk: "#00adee", mInk: "#ec008c", yInk: "#fff200", kInk: "#231f20",
+  // fractal glass (ribbed-glass refraction overlay)
+  fgOn: false, fgWidth: 30, fgIrregular: 0.5, fgRefract: 80,
+  fgShade: 0.5, fgDispersion: 0.3, fgFrost: 6,
   // grunge
   turbAmt: 0, turbScale: 40, fleck: 0, dust: 0,
   // grain
@@ -73,5 +76,15 @@ export const PRESETS = {
     cOn:false, mOn:false, yOn:false,
     paper:"#f2ecdd", dust:0.35,
     grainAmt:0.1, grainChroma:0.05,
+  },
+  fractalGlass: {
+    seed: 5,
+    srcMode:"linear", gradAngle:165,
+    srcBg:"#4d5cae", srcC1:"#9aa2ce", srcC2:"#f4eeda",
+    srcContrast:35, posterize:5,
+    htOn:false,
+    fgOn:true, fgWidth:30, fgIrregular:0.5, fgRefract:170,
+    fgShade:0.5, fgDispersion:0.35, fgFrost:5,
+    grainAmt:0.06,
   },
 };
