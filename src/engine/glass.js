@@ -58,9 +58,10 @@ export function applyFractalGlass(P, ctx, w, h){
     // soft shadow beside it — flat rib interiors stay invisible, so the glass
     // reads through refraction, not through banding
     const spec = Math.pow(1 - Math.min(t*8, 1), 2);       // hairline at edge
-    const shad = Math.pow(1 - Math.min((1-t)*7, 1), 2);   // shadow before it
+    const d = Math.min(t, 1 - t);                          // dist to boundary
+    const shad = Math.pow(1 - Math.min(d*3.5, 1), 2);     // groove both sides
     const m = 0.45 + 1.1 * noise1(x/(width*4), seed+41);  // per-rib strength
-    shade[x] = P.fgShade * m * (spec * 115 - shad * 45 + (0.5 - t) * 10);
+    shade[x] = P.fgShade * m * (spec * 115 - shad * 48 + (0.5 - t) * 6);
   }
 
   const out = ctx.createImageData(w, h);
