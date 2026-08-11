@@ -6,6 +6,7 @@ import { readURL, scheduleURLUpdate, shareURL } from './state/url.js';
 import { exportPresetJSON, importPresetJSON } from './state/presetIO.js';
 import { render } from './engine/pipeline.js';
 import { setUploadedImage, clearUploadedImage, bumpFontGen } from './engine/source.js';
+import { extractPalette, applyPaletteToParams } from './engine/palette.js';
 import { buildControls, syncUI, updateVisibility, relabelControls, updateDirty } from './ui/controls.js';
 import { t, initLang, setLang, getLang, applyStatic } from './i18n.js';
 
@@ -163,6 +164,7 @@ document.getElementById('reset').addEventListener('click', () => {
   clearUploadedImage();
   uploadInput.value = '';
   clearUploadBtn.hidden = true;
+  hidePaletteUI();
   applyPreset(presetSel.value);
   toast(t('toast.reset'));
 });
@@ -208,22 +210,78 @@ document.getElementById('jsonFile').addEventListener('change', async e => {
 
 const uploadInput = document.getElementById('upload');
 const clearUploadBtn = document.getElementById('clearUpload');
+const paletteRow = document.getElementById('paletteRow');
+const paletteHint = document.getElementById('paletteHint');
+const paletteTolSel = document.getElementById('paletteTol');
+const extractBtn = document.getElementById('extractPalette');
+const swatchBox = document.getElementById('paletteSwatches');
+let uploadedForPalette = null;
+
+function hidePaletteUI(){
+  uploadedForPalette = null;
+  paletteRow.hidden = true;
+  paletteHint.hidden = true;
+  swatchBox.hidden = true;
+  swatchBox.innerHTML = '';
+}
+
+function renderSwatches(palette){
+  swatchBox.innerHTML = '';
+  for(const c of palette){
+    const sw = document.createElement('div');
+    sw.className = 'sw';
+    sw.style.background = c.hex;
+    sw.style.flexGrow = Math.max(0.35, c.ratio * 10);
+    sw.title = `${c.hex} · ${(c.ratio * 100).toFixed(1)}%`;
+    const pct = document.createElement('span');
+    pct.textContent = Math.round(c.ratio * 100) + '%';
+    // readable % label on any swatch color
+    const lum = 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+    pct.style.color = lum > 140 ? '#111' : '#fff';
+    sw.appendChild(pct);
+    swatchBox.appendChild(sw);
+  }
+  swatchBox.hidden = palette.length === 0;
+}
+
 uploadInput.addEventListener('change', e => {
   const f = e.target.files[0];
   if(!f) return;
   const img = new Image();
   img.onload = () => {
     setUploadedImage(img);
+    uploadedForPalette = img;
     P.srcMode = 'image';
     clearUploadBtn.hidden = false;
+    paletteRow.hidden = false;
+    paletteHint.hidden = false;
+    // preview the grouping right away; applying to params stays a button click
+    renderSwatches(extractPalette(img, { tolerance: +paletteTolSel.value }));
     syncUI(P); updateVisibility(P); onParamChange();
   };
   img.src = URL.createObjectURL(f);
 });
+
+paletteTolSel.addEventListener('change', () => {
+  if(!uploadedForPalette) return;
+  renderSwatches(extractPalette(uploadedForPalette, { tolerance: +paletteTolSel.value }));
+});
+
+extractBtn.addEventListener('click', () => {
+  if(!uploadedForPalette) return;
+  const palette = extractPalette(uploadedForPalette, { tolerance: +paletteTolSel.value });
+  renderSwatches(palette);
+  if(!palette.length) return;
+  applyPaletteToParams(P, palette);
+  syncUI(P); updateVisibility(P); onParamChange();
+  toast(t('toast.palette').replace('{n}', palette.length));
+});
+
 clearUploadBtn.addEventListener('click', () => {
   clearUploadedImage();
   uploadInput.value = '';
   clearUploadBtn.hidden = true;
+  hidePaletteUI();
   if(P.srcMode === 'image') P.srcMode = 'blobs';
   syncUI(P); updateVisibility(P); onParamChange();
   toast(t('toast.uploadCleared'));

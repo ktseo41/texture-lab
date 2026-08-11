@@ -60,6 +60,17 @@
         <input type="file" id="upload" accept="image/*" class="file">
         <button id="clearUpload" data-i18n-title="title.clearUpload" hidden>✕</button>
       </div>
+      <div class="row" id="paletteRow" hidden>
+        <label data-i18n="palette">사진 팔레트</label>
+        <select id="paletteTol">
+          <option value="45" data-i18n="palette.tol.fine">세밀하게</option>
+          <option value="80" selected data-i18n="palette.tol.normal">보통</option>
+          <option value="130" data-i18n="palette.tol.broad">넓게 묶기</option>
+        </select>
+        <button id="extractPalette" data-i18n="palette.extract" data-i18n-title="title.extractPalette">색 추출</button>
+      </div>
+      <div class="hint" id="paletteHint" data-i18n="hint.palette" hidden>비슷한 색을 하나로 묶어 비율을 계산하고, 배경/블롭 색상에 적용합니다</div>
+      <div id="paletteSwatches" class="swatches" hidden></div>
     </div>
   </details>
 

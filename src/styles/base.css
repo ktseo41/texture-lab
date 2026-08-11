@@ -118,6 +118,18 @@ summary .idx{ color:var(--accent); font-family:var(--mono); }
 
 .hint{ font-family:var(--font); font-size:11px; font-weight:500; line-height:1.55; color:var(--dim); margin-top:-4px; opacity:.9; }
 
+/* photo palette swatches — widths follow each color's area ratio */
+.swatches{ display:flex; gap:3px; min-height:34px; }
+.swatches .sw{
+  flex:1 1 0; min-width:22px; position:relative;
+  border:var(--field-border);
+}
+.swatches .sw span{
+  position:absolute; bottom:2px; left:0; right:0; text-align:center;
+  font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.02em;
+  pointer-events:none;
+}
+
 /* inactive-feature rows: visible but muted, inputs disabled */
 .row.dim, .grp.dim, .hint.dim{ opacity:.4; }
 .row.dim input, .grp.dim input, .row.dim select{ cursor:default; }
