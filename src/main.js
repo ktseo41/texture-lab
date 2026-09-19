@@ -115,15 +115,17 @@ function populatePresetSelect(){
 }
 populatePresetSelect();
 
-function applyPreset(v){
-  P = { ...DEFAULTS, ...resolvePreset(v) };
+// keepSize: carry the current canvas size over unless the preset sets its own
+function applyPreset(v, keepSize = false){
+  const size = keepSize ? { width: P.width, height: P.height } : {};
+  P = { ...DEFAULTS, ...size, ...resolvePreset(v) };
   syncUI(P);
   updateSections(P);
   onParamChange();
 }
 presetSel.addEventListener('change', () => {
   delPresetBtn.hidden = !presetSel.value.startsWith('u:');
-  applyPreset(presetSel.value);
+  applyPreset(presetSel.value, true);
 });
 
 savePresetBtn.addEventListener('click', () => {
@@ -131,7 +133,8 @@ savePresetBtn.addEventListener('click', () => {
   if(!name) return;
   const u = loadUserPresets();
   const d = {};
-  for(const k of Object.keys(DEFAULTS)) if(P[k] !== DEFAULTS[k]) d[k] = P[k];
+  // canvas size is not part of a preset
+  for(const k of Object.keys(DEFAULTS)) if(k !== 'width' && k !== 'height' && P[k] !== DEFAULTS[k]) d[k] = P[k];
   u[name] = d;
   saveUserPresets(u);
   presetSel.value = '';
