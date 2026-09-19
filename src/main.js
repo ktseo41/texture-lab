@@ -45,12 +45,13 @@ function requestRender(){
 /* ---------- mobile preview: tap toggles fit <-> actual size ---------- */
 const stage = document.getElementById('stage');
 const zoomInfo = document.getElementById('zoomInfo');
+const zoomText = document.getElementById('zoomText');
 const mobileMQ = window.matchMedia('(max-width: 768px)');
 
 function updateZoomInfo(){
   if(!view.width) return;
   const pct = Math.round(view.clientWidth / view.width * 100);
-  zoomInfo.textContent = `${view.width}×${view.height} · ${pct}% ⤢`;
+  zoomText.textContent = `${view.width}×${view.height} · ${pct}%`;
 }
 new ResizeObserver(updateZoomInfo).observe(view);
 

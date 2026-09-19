@@ -61,6 +61,12 @@ button, select{
   border:var(--btn-border);
 }
 select{ font-family:var(--font); font-size:12px; }
+button{ white-space:nowrap; }
+/* inline icons: stroke weight matched to the bold mono arrows (↓ ↑) */
+.ico{
+  width:1em; height:1em; vertical-align:-.12em; flex:none;
+  fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:square; stroke-linejoin:miter;
+}
 input[type=file].file{ font-size:10px; color:var(--dim); max-width:190px; }
 
 /* ---------- groups ---------- */
@@ -187,8 +193,9 @@ input[type=range]::-moz-range-thumb{
   /* fixed so they stay put while the stage scrolls */
   #busy{ position:fixed; }
   #zoomInfo{
-    display:block; position:fixed; right:8px; top:calc(42dvh - 34px); z-index:4;
-    padding:6px 9px; font-family:var(--mono); font-size:10px; letter-spacing:.06em;
+    display:flex; align-items:center; gap:7px;
+    position:fixed; right:8px; top:calc(42dvh - 38px); z-index:4;
+    padding:7px 10px; font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.06em;
     background:var(--status-bg); color:var(--status-fg); cursor:pointer;
     font-variant-numeric:tabular-nums;
   }
@@ -199,6 +206,8 @@ input[type=range]::-moz-range-thumb{
     width:auto !important; min-width:0; max-width:none;
     border-top:var(--group-sep);
   }
+  #zoomInfo .ico{ width:15px; height:15px; }
+  .btnrow button{ padding-left:6px; padding-right:6px; }
   #masthead h1{ font-size:22px; }
   input[type=file].file{ max-width:100%; }
 }

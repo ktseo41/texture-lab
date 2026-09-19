@@ -14,7 +14,7 @@
 <div id="stage">
   <canvas id="view"></canvas>
   <div id="busy" data-i18n="busy">RENDERING…</div>
-  <div id="zoomInfo" aria-hidden="true"></div>
+  <div id="zoomInfo" aria-hidden="true"><span id="zoomText"></span><svg class="ico" viewBox="0 0 12 12"><path d="M7 1.2h3.8V5M10.8 1.2 6.8 5.2M5 10.8H1.2V7M1.2 10.8l4-4"/></svg></div>
 </div>
 
 <div id="resizer" role="separator" aria-orientation="vertical"></div>
@@ -38,7 +38,7 @@
     </div>
     <div class="btnrow">
       <button id="reset" data-i18n-title="title.reset">RESET</button>
-      <button id="rndSeed" data-i18n-title="title.rndSeed">SEED ⟳</button>
+      <button id="rndSeed" data-i18n-title="title.rndSeed">SEED <svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M10.4 6.2a4.4 4.4 0 1 1-1.5-3.5"/><path d="M10.6 1v3.1H7.5"/></svg></button>
       <button id="share" data-i18n-title="title.share">LINK</button>
       <button id="saveJson" data-i18n-title="title.saveJson">JSON↓</button>
       <button id="loadJson" data-i18n-title="title.loadJson">JSON↑</button>
