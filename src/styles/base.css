@@ -24,6 +24,7 @@ body{
   color:var(--dim); opacity:0; transition:opacity .15s; pointer-events:none;
 }
 #busy.on{ opacity:1; }
+#zoomInfo{ display:none; }
 
 /* ---------- resizer ---------- */
 #resizer{
@@ -180,6 +181,17 @@ input[type=range]::-moz-range-thumb{
 @media (max-width: 768px){
   body{ flex-direction:column; height:100dvh; }
   #stage{ flex:none; height:42dvh; padding:14px; }
+  /* tap the preview: fit <-> actual size (pan by scrolling) */
+  #stage.actual{ align-items:flex-start; justify-content:flex-start; }
+  #stage.actual #view{ max-width:none; max-height:none; margin:auto; flex:none; }
+  /* fixed so they stay put while the stage scrolls */
+  #busy{ position:fixed; }
+  #zoomInfo{
+    display:block; position:fixed; right:8px; top:calc(42dvh - 28px); z-index:4;
+    padding:3px 7px; font-family:var(--mono); font-size:10px; letter-spacing:.06em;
+    background:var(--status-bg); color:var(--status-fg); pointer-events:none;
+    font-variant-numeric:tabular-nums;
+  }
   #resizer{ display:none; }
   #panel{
     flex:1; min-height:0;

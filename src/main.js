@@ -36,6 +36,32 @@ function requestRender(){
   });
 }
 
+/* ---------- mobile preview: tap toggles fit <-> actual size ---------- */
+const stage = document.getElementById('stage');
+const zoomInfo = document.getElementById('zoomInfo');
+const mobileMQ = window.matchMedia('(max-width: 768px)');
+
+function updateZoomInfo(){
+  if(!view.width) return;
+  const pct = Math.round(view.clientWidth / view.width * 100);
+  zoomInfo.textContent = `${view.width}×${view.height} · ${pct}%`;
+}
+new ResizeObserver(updateZoomInfo).observe(view);
+
+view.addEventListener('click', e => {
+  if(!mobileMQ.matches) return;
+  // keep the tapped spot centered when switching to actual size
+  const r = view.getBoundingClientRect();
+  const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+  const actual = stage.classList.toggle('actual');
+  if(actual){
+    stage.scrollLeft = view.offsetLeft + fx * view.offsetWidth - stage.clientWidth / 2;
+    stage.scrollTop = view.offsetTop + fy * view.offsetHeight - stage.clientHeight / 2;
+  }
+  updateZoomInfo();
+});
+mobileMQ.addEventListener('change', () => { if(!mobileMQ.matches) stage.classList.remove('actual'); });
+
 // first render can race webfont loading — re-render text with the real font
 document.fonts.ready.then(() => { bumpFontGen(); requestRender(); });
 
