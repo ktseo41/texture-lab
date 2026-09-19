@@ -2,6 +2,9 @@
 
 *{ box-sizing:border-box; margin:0; padding:0; }
 
+/* no double-tap zoom anywhere; focus zoom on small inputs is capped by the viewport meta */
+html{ touch-action:manipulation; -webkit-text-size-adjust:100%; }
+
 body{
   height:100vh; display:flex; overflow:hidden;
   background:var(--bg); color:var(--text);
