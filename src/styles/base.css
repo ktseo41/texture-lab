@@ -64,9 +64,10 @@ select{ font-family:var(--font); font-size:12px; }
 button{ white-space:nowrap; }
 /* inline icons: stroke weight matched to the bold mono arrows (↓ ↑) */
 .ico{
-  width:1em; height:1em; vertical-align:-.12em; flex:none;
-  fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:square; stroke-linejoin:miter;
+  height:.73em; width:auto; vertical-align:baseline; flex:none; margin-left:1px;
+  fill:none; stroke:currentColor; stroke-width:1.75; stroke-linecap:butt; stroke-linejoin:miter;
 }
+.ico.fill{ fill:currentColor; stroke:none; }
 input[type=file].file{ font-size:10px; color:var(--dim); max-width:190px; }
 
 /* ---------- groups ---------- */
@@ -206,7 +207,7 @@ input[type=range]::-moz-range-thumb{
     width:auto !important; min-width:0; max-width:none;
     border-top:var(--group-sep);
   }
-  #zoomInfo .ico{ width:15px; height:15px; }
+  #zoomInfo .ico{ width:13px; height:13px; margin-left:0; }
   .btnrow button{ padding-left:6px; padding-right:6px; }
   #masthead h1{ font-size:22px; }
   input[type=file].file{ max-width:100%; }
