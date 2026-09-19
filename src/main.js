@@ -26,12 +26,18 @@ function requestRender(){
   requestAnimationFrame(() => {
     setTimeout(() => {
       const t0 = performance.now();
-      render(P, view);
-      statTime.textContent = `${Math.round(performance.now() - t0)} ms`;
-      statSize.textContent = `${P.width}×${P.height}`;
-      statSeed.textContent = `SEED ${P.seed}`;
-      pending = false;
-      busy.classList.remove('on');
+      // a failed render must not leave the scheduler stuck on "rendering"
+      try{
+        render(P, view);
+        statTime.textContent = `${Math.round(performance.now() - t0)} ms`;
+        statSize.textContent = `${P.width}×${P.height}`;
+        statSeed.textContent = `SEED ${P.seed}`;
+      }catch(err){
+        console.error(err);
+      }finally{
+        pending = false;
+        busy.classList.remove('on');
+      }
     }, 0);
   });
 }
@@ -44,22 +50,25 @@ const mobileMQ = window.matchMedia('(max-width: 768px)');
 function updateZoomInfo(){
   if(!view.width) return;
   const pct = Math.round(view.clientWidth / view.width * 100);
-  zoomInfo.textContent = `${view.width}×${view.height} · ${pct}%`;
+  zoomInfo.textContent = `${view.width}×${view.height} · ${pct}% ⤢`;
 }
 new ResizeObserver(updateZoomInfo).observe(view);
 
-view.addEventListener('click', e => {
+function togglePreview(e){
   if(!mobileMQ.matches) return;
   // keep the tapped spot centered when switching to actual size
   const r = view.getBoundingClientRect();
-  const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+  const clamp01 = n => Math.min(1, Math.max(0, n));
+  const fx = clamp01((e.clientX - r.left) / r.width), fy = clamp01((e.clientY - r.top) / r.height);
   const actual = stage.classList.toggle('actual');
   if(actual){
     stage.scrollLeft = view.offsetLeft + fx * view.offsetWidth - stage.clientWidth / 2;
     stage.scrollTop = view.offsetTop + fy * view.offsetHeight - stage.clientHeight / 2;
   }
   updateZoomInfo();
-});
+}
+view.addEventListener('click', togglePreview);
+zoomInfo.addEventListener('click', togglePreview);
 mobileMQ.addEventListener('change', () => { if(!mobileMQ.matches) stage.classList.remove('actual'); });
 
 // first render can race webfont loading — re-render text with the real font

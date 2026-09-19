@@ -187,9 +187,9 @@ input[type=range]::-moz-range-thumb{
   /* fixed so they stay put while the stage scrolls */
   #busy{ position:fixed; }
   #zoomInfo{
-    display:block; position:fixed; right:8px; top:calc(42dvh - 28px); z-index:4;
-    padding:3px 7px; font-family:var(--mono); font-size:10px; letter-spacing:.06em;
-    background:var(--status-bg); color:var(--status-fg); pointer-events:none;
+    display:block; position:fixed; right:8px; top:calc(42dvh - 34px); z-index:4;
+    padding:6px 9px; font-family:var(--mono); font-size:10px; letter-spacing:.06em;
+    background:var(--status-bg); color:var(--status-fg); cursor:pointer;
     font-variant-numeric:tabular-nums;
   }
   #resizer{ display:none; }

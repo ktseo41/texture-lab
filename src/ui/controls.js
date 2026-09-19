@@ -239,10 +239,18 @@ export function buildControls(getP, onChange, getBaseline){
       if(d.dim) dimRules.push({ fn: d.dim, els: hintEl ? [row, hintEl] : [row] });
       inp.addEventListener('input', () => {
         const P = getP();
-        P[d.k] = readInput(d, inp);
+        let v = readInput(d, inp);
+        if(d.t === 'number'){
+          // field cleared or mid-edit: keep the last good value until there is a usable number
+          if(inp.value === '' || !Number.isFinite(v)) return;
+          if(d.k === 'width' || d.k === 'height') v = Math.min(8192, Math.max(1, Math.round(v)));
+        }
+        P[d.k] = v;
         if(val) val.textContent = fmt(P[d.k]);
         onChange(d.k);
       });
+      // leaving a number field empty/out of range snaps it back to the value in use
+      if(d.t === 'number') inp.addEventListener('change', () => { inp.value = getP()[d.k]; });
     }
   }
   // channel rows (enable / angle / offset X / offset Y)
