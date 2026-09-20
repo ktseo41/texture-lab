@@ -13,12 +13,14 @@ A parametric web tool for generating **CMYK halftone · print grunge · grain gr
 - **CMYK halftone screening** — per-channel angles/offsets, 5 dot shapes, dot gain, jitter, edge roughness, plate misregistration
 - **Source stage** — organic color blobs (1–5 colors), linear gradient, or your own uploaded image
 - **Print grunge** — turbulence warp, CMY flecks, dust/speckle
+- **Fractal glass** — reeded-glass look: vertical ribs with refraction, chromatic dispersion, frost, and a line fade
 - **Film grain** — mono or chroma noise, sized 1–6 px
 - **Text layer** — drawn into the source, so it halftones/grains together with the artwork instead of sitting on top
 - **Deterministic seeds** — the same seed always renders the same texture
 - **Shareable URLs** — the whole state is encoded into `?p=`, so any texture is a link
-- **Presets** — 5 factory presets + save your own (localStorage / JSON export)
+- **Presets** — 6 factory presets + save your own (localStorage / JSON export)
 - **PNG export** at any canvas size, Korean/English/Japanese UI
+- **Mobile layout** — stage and panel stack on narrow screens; tap the preview to switch between fit-to-screen and actual size, with size and zoom shown
 
 ## Development
 
@@ -39,8 +41,10 @@ src/
     halftone.js    CMYK separation + per-channel rotated screens. Channel layers
                    are cached; misregistration is applied at composite time,
                    so no re-raster
+    glass.js       fractal (reeded) glass: rib refraction, dispersion, frost, line fade
     grain.js       film grain (noise cache) + dust / ink flecks
-    pipeline.js    source → halftone → speckle → grain orchestration
+    pipeline.js    source → halftone → fractal glass → speckle → grain orchestration,
+                   with per-stage caching
   state/
     params.js      DEFAULTS + factory presets
     url.js         diff-from-defaults encoded to ?p= as base64url (share links)
@@ -49,7 +53,7 @@ src/
     controls.js    declarative control defs → DOM, conditional visibility
   styles/
     base.css       structure / layout (theme-agnostic)
-    themes.css     BRUTAL (brutalism) / PANEL (instrument panel) themes
+    themes.css     BRUTAL (brutalism) theme
 ```
 
 Planned text-layer extensions (alignment options, box wrapping, rotation, fonts) are documented in [docs/text-layer-roadmap.md](docs/text-layer-roadmap.md).
