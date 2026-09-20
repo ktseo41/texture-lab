@@ -26,7 +26,8 @@ export const DEFAULTS = {
   misreg: 0,
   cInk: "#00adee", mInk: "#ec008c", yInk: "#fff200", kInk: "#231f20",
   // fractal glass (ribbed-glass refraction overlay)
-  fgOn: false, fgWidth: 30, fgIrregular: 0.5, fgRefract: 80,
+  fgOn: false, fgPattern: "vertical", // vertical | reeded | horizontal | grid | pyramid | diamond | wave | honeycomb
+  fgWidth: 30, fgIrregular: 0.5, fgRefract: 80,
   fgShade: 0.5, fgDispersion: 0.3, fgFrost: 6, fgFade: 0.5,
   // grunge
   turbAmt: 0, turbScale: 40, fleck: 0, dust: 0,
@@ -86,5 +87,16 @@ export const PRESETS = {
     fgOn:true, fgWidth:32, fgIrregular:0, fgRefract:143,
     fgShade:0.34, fgDispersion:0.46, fgFrost:23.5, fgFade:1,
     grainAmt:0.06,
+  },
+  waveGlass: {
+    seed: 87113,
+    srcBg:"#bd7070", srcC1:"#9195b1", srcC2:"#f4df9a", srcC3:"#59547d",
+    blobCount:11, blobScale:104, blobIrregular:0.55, blobSoft:18,
+    srcContrast:-50, srcBright:-23,
+    textOn:true, textSize:15.5, textAlpha:0.87,
+    htOn:false,
+    fgOn:true, fgPattern:"wave", fgIrregular:0.32, fgRefract:24,
+    fgShade:0, fgDispersion:1, fgFrost:0.5,
+    grainAmt:0.065,
   },
 };

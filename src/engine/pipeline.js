@@ -69,7 +69,7 @@ function getBase(P, src, w, h){
 
 // stage 2: fractal glass over the base, re-applied only when glass params change
 function getGlass(P, base, w, h){
-  const key = base.key + '‖' + [P.seed, P.fgWidth, P.fgIrregular, P.fgFrost,
+  const key = base.key + '‖' + [P.seed, P.fgPattern, P.fgWidth, P.fgIrregular, P.fgFrost,
     P.fgRefract, P.fgShade, P.fgDispersion, P.fgFade].join(',');
   if(key === glassCache.key) return glassCache;
 
