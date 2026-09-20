@@ -18,7 +18,7 @@ A parametric web tool for generating **CMYK halftone · print grunge · grain gr
 - **Text layer** — drawn into the source, so it halftones/grains together with the artwork instead of sitting on top
 - **Deterministic seeds** — the same seed always renders the same texture
 - **Shareable URLs** — the whole state is encoded into `?p=`, so any texture is a link
-- **Presets** — 7 factory presets + save your own (localStorage / JSON export)
+- **Presets** — 6 factory presets + save your own (localStorage / JSON export)
 - **PNG export** at any canvas size, Korean/English/Japanese UI
 - **Mobile layout** — stage and panel stack on narrow screens; tap the preview to switch between fit-to-screen and actual size, with size and zoom shown
 

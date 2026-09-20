@@ -40,7 +40,6 @@ const DICT = {
     'preset.cleanCmyk': '④ 클린 CMYK 할프톤',
     'preset.newsprint': '⑤ 신문 인쇄 (거친 모노 망점)',
     'preset.fractalGlass': '⑥ 프랙탈 글래스 (리브드 유리 굴절)',
-    'preset.waveGlass': '⑦ 물결 글래스 (글자 위 물결 유리)',
 
     'toast.link': '링크가 클립보드에 복사되었습니다',
     'toast.linkFail': '주소창의 URL을 복사하세요 (자동 복사 실패)',
@@ -160,7 +159,6 @@ const DICT = {
     'preset.cleanCmyk': '④ Clean CMYK halftone',
     'preset.newsprint': '⑤ Newsprint (rough mono dots)',
     'preset.fractalGlass': '⑥ Fractal glass (ribbed-glass refraction)',
-    'preset.waveGlass': '⑦ Wave glass (wavy glass over type)',
 
     'toast.link': 'Link copied to clipboard',
     'toast.linkFail': 'Copy the URL from the address bar (auto-copy failed)',
@@ -280,7 +278,6 @@ const DICT = {
     'preset.cleanCmyk': '④ クリーンCMYKハーフトーン',
     'preset.newsprint': '⑤ 新聞印刷（粗いモノクロ網点）',
     'preset.fractalGlass': '⑥ フラクタルガラス（リブガラス屈折）',
-    'preset.waveGlass': '⑦ ウェーブガラス（文字の上の波ガラス）',
 
     'toast.link': 'リンクをクリップボードにコピーしました',
     'toast.linkFail': 'アドレスバーのURLをコピーしてください（自動コピー失敗）',
