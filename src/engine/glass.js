@@ -289,8 +289,8 @@ function applyLensCells(P, ctx, s, w, h, width, irr, seed){
       const e = hd > 0.9 ? (hd - 0.9) * 10 : 0;            // thin seam
       const lit = -(u*0.6 + v*0.8);                    // light from the upper left
       // dome shading + seam, plus a faint per-cell tone (pressed cells never match)
-      let g = shade * (c.m * (lit * 0.09 - e*e * 0.4) + (c.m - 1) * 0.07);
-      let sh = shade * c.m * e * (lit > 0 ? lit : 0) * 22;   // lit rim
+      let g = shade * (c.m * (lit * 0.09 - e*e * 0.4) + (c.m - 1) * 0.16);
+      let sh = shade * c.m * e * (lit > 0 ? lit : 0) * 40;   // lit rim
       if(ff){
         const fx = x / FSTEP, xi = fx|0, fu = fx - xi;
         const p0 = ff[r0+xi], q0 = ff[r1+xi];
