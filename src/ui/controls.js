@@ -61,7 +61,7 @@ export const UI = {
   ],
   'g-glass': [
     {k:'fgOn', t:'check'},
-    {k:'fgPattern', t:'select', opts:['vertical','reeded','horizontal','grid','pyramid','diamond','wave','honeycomb'], dim:p=>!p.fgOn},
+    {k:'fgPattern', t:'select', opts:['vertical','grid','pyramid','wave'], dim:p=>!p.fgOn},
     {k:'fgWidth', t:'range', min:6, max:120, step:1, dim:p=>!p.fgOn},
     {k:'fgIrregular', t:'range', min:0, max:1, step:0.01, hint:true, dim:p=>!p.fgOn},
     {k:'fgRefract', t:'range', min:0, max:250, step:1, hint:true, dim:p=>!p.fgOn},

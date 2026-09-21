@@ -4,10 +4,9 @@
 // ramp across the rib, and RGB dispersion.
 // "fractal" = rib widths drift irregularly across the sheet.
 // fgPattern picks the glass: vertical flutes (default, the original path
-// below); a relief pattern — relief flutes, horizontal flutes, pyramids, wavy
-// flutes — where both refraction and lighting come from the surface slope; or
-// a lens-cell pattern — square, diamond, honeycomb — where every cell images
-// the scene anew.
+// below); a relief pattern — pyramids, wavy flutes — where both refraction and
+// lighting come from the surface slope; or square lens cells, where every cell
+// images the scene anew.
 
 import { hash3 } from './random.js';
 
@@ -35,7 +34,7 @@ function vnoise(x, y, seed){
 // downhill) and the lighting (faces turned to the light brighten, the others
 // darken), so flat colour still reads as glass without drawn-on lines.
 
-const LIGHT_X = -0.6, LIGHT_Y = -0.8;   // light from the upper left
+const LIGHT_X = -0.6;                   // light from the upper left
 const GLINT = 34;                       // additive glint strength at fgShade 1
 const WAVE_SUB = 4;                     // wave: table oversampling (sub-pixel lookup)
 
@@ -91,17 +90,7 @@ function applyRelief(P, ctx, s, w, h, width, irr, seed){
   let bx = 0, by = 0;
   let fsx = 240, fsy = 240;             // fade-noise wavelengths
 
-  if(pat === 'reeded'){
-    // vertical flutes again, but as lit relief instead of drawn hairlines
-    A = reliefTable(w, 1, P, width, irr, seed, LIGHT_X, 'flute');
-    sA = 1;
-    for(let y=0; y<h; y++) axR[y] = 1;
-    fsx = width*2.5;
-  } else if(pat === 'horizontal'){
-    B = reliefTable(h, 1, P, width, irr, seed, LIGHT_Y, 'flute');
-    for(let y=0; y<h; y++) baseB[y] = y;
-    by = 1; fsy = width*2.5;
-  } else if(pat === 'pyramid'){
+  if(pat === 'pyramid'){
     // pressed pyramids are lit from above in every real photo: rows read stronger than columns
     A = reliefTable(w, 1, P, width, irr, seed, -0.3, 'facet');
     B = reliefTable(h, 1, P, width, irr, seed+101, -0.95, 'facet');
@@ -144,8 +133,6 @@ function applyRelief(P, ctx, s, w, h, width, irr, seed){
     wob = lens * (0.5 + irr * 0.8);
   }
   const WS = 1 / (width * 0.9);           // ridge wobble: about one bend per cell
-  const yOnly = A === null;
-  const xOnly = pat === 'reeded';
 
   const out = ctx.createImageData(w, h);
   const o = out.data;
@@ -208,31 +195,16 @@ function applyRelief(P, ctx, s, w, h, width, irr, seed){
       const dx = a*ax + b*bx, dy = a*ay + b*by;
       const di = ro + x*4;
       for(let c=0; c<3; c++){
-        let v;
-        if(xOnly){
-          let sx = x + dx * chScale[c];
-          sx = sx < 0 ? 0 : sx > w-1 ? w-1 : sx;
-          const x0 = sx|0, fr = sx - x0;
-          const p0 = ro + x0*4 + c;
-          v = (s[p0]*(1-fr) + s[x0 < w-1 ? p0+4 : p0]*fr) * gain + sh;
-        } else if(yOnly){
-          let sy = y + dy * chScale[c];
-          sy = sy < 0 ? 0 : sy > h-1 ? h-1 : sy;
-          const y0 = sy|0, fq = sy - y0;
-          const p0 = y0*stride + x*4 + c;
-          v = (s[p0]*(1-fq) + s[y0 < h-1 ? p0+stride : p0]*fq) * gain + sh;
-        } else {
-          let sx = x + dx * chScale[c], sy = y + dy * chScale[c];
-          sx = sx < 0 ? 0 : sx > w-1 ? w-1 : sx;
-          sy = sy < 0 ? 0 : sy > h-1 ? h-1 : sy;
-          const x0 = sx|0, fr = sx - x0, y0 = sy|0, fq = sy - y0;
-          const p0 = y0*stride + x0*4 + c;
-          const p1 = x0 < w-1 ? p0+4 : p0;
-          const dn = y0 < h-1 ? stride : 0;
-          const top = s[p0] + (s[p1]-s[p0])*fr;
-          const bot = s[p0+dn] + (s[p1+dn]-s[p0+dn])*fr;
-          v = (top + (bot-top)*fq) * gain + sh;
-        }
+        let sx = x + dx * chScale[c], sy = y + dy * chScale[c];
+        sx = sx < 0 ? 0 : sx > w-1 ? w-1 : sx;
+        sy = sy < 0 ? 0 : sy > h-1 ? h-1 : sy;
+        const x0 = sx|0, fr = sx - x0, y0 = sy|0, fq = sy - y0;
+        const p0 = y0*stride + x0*4 + c;
+        const p1 = x0 < w-1 ? p0+4 : p0;
+        const dn = y0 < h-1 ? stride : 0;
+        const top = s[p0] + (s[p1]-s[p0])*fr;
+        const bot = s[p0+dn] + (s[p1+dn]-s[p0+dn])*fr;
+        const v = (top + (bot-top)*fq) * gain + sh;
         o[di+c] = v < 0 ? 0 : v > 255 ? 255 : v;
       }
       o[di+3] = 255;
@@ -241,19 +213,15 @@ function applyRelief(P, ctx, s, w, h, width, irr, seed){
   ctx.putImageData(out, 0, 0);
 }
 
-// ---- lens-cell patterns ---------------------------------------------------
-// Pressed glass made of small lenses: every cell shows its own demagnified,
-// upright copy of what lies behind it, so a figure repeats cell after cell and
-// an outline turns into a band of half-filled cells. No drawn borders — a cell
-// reads through the image breaking at its edge, a soft dome shading and a thin
-// dark seam. (after real photos of hexagonal- and square-lens glass with a
-// person behind it)
-// layout: 'hex' honeycomb · 'square' grid · 'diamond' the square grid turned 45°
-const LENS_LAYOUT = { grid: 'square', diamond: 'diamond', honeycomb: 'hex' };
+// ---- square lens cells -----------------------------------------------------
+// Pressed glass made of small convex lenses. A cell shows 1 − refract/width of
+// the scene behind it: 1 untouched, 0 one flat colour (object near the focus —
+// the mosaic look of something right behind the glass), negative flipped
+// shrunken copies repeating cell after cell (object far away). No drawn
+// borders — a cell reads through the image breaking at its edge, a soft dome
+// shading and a thin dark seam. (after real photos of square-lens glass)
 
-function applyLensCells(P, ctx, s, w, h, width, irr, seed, layout){
-  const hex = layout === 'hex', dia = layout === 'diamond';
-  const R = Math.SQRT1_2;
+function applyLensCells(P, ctx, s, w, h, width, irr, seed){
   const out = ctx.createImageData(w, h);
   const o = out.data;
   const disp = P.fgDispersion;
@@ -261,8 +229,13 @@ function applyLensCells(P, ctx, s, w, h, width, irr, seed, layout){
   const stride = w*4;
   const k = P.fgRefract / width;         // cell spans ±fgRefract/2, as a flute does
   const half = width * 0.5, inv = 1 / half;
-  const rowH = width * Math.sqrt(3);      // pointy-top hexes: two interleaved lattices
   const shade = P.fgShade;
+  // near-focus light mixing inside a cell (the camera's aperture): a small
+  // 3×3 spread, widest when the cell collapses to one colour
+  const ap = width * 0.07 * Math.min(1, k);
+  const nTap = ap > 0 ? 9 : 1, tapW = 1 / nTap;
+  const tapX = new Float32Array(nTap), tapY = new Float32Array(nTap);
+  if(ap > 0) for(let t=0; t<9; t++){ tapX[t] = (t%3 - 1) * ap; tapY[t] = ((t/3|0) - 1) * ap; }
 
   const fade = P.fgFade;
   const FSTEP = 4;
@@ -293,47 +266,22 @@ function applyLensCells(P, ctx, s, w, h, width, irr, seed, layout){
     return c;
   };
 
-  // per-column lattice candidates (hex: the x half of the nearest-centre test;
-  // square: b is the cell itself)
-  const colIa = new Int32Array(w), colIb = new Int32Array(w);
-  const colDa = new Float32Array(w), colDb = new Float32Array(w);
+  const colI = new Int32Array(w), colD = new Float32Array(w);
   for(let x=0; x<w; x++){
-    colIa[x] = Math.round(x / width); colIb[x] = Math.floor(x / width);
-    colDa[x] = x - colIa[x] * width; colDb[x] = x - (colIb[x] + 0.5) * width;
+    colI[x] = Math.floor(x / width);
+    colD[x] = x - (colI[x] + 0.5) * width;
   }
-  const dOff = dia ? h : 0;               // keeps x−y non-negative for the diamond grid
 
   for(let y=0; y<h; y++){
     const ro = y*stride;
     const fy = y / FSTEP, yi = fy|0, fv = fy - yi;
     const r0 = yi*fgw, r1 = r0 + fgw;
-    const ja = Math.round(y / rowH), jb = Math.floor(y / rowH);
-    const ay = ja * rowH, by = (jb + 0.5) * rowH;
-    const day = y - ay, dby = y - by;
     const sqJ = Math.floor(y / width), sqDy = y - (sqJ + 0.5) * width;
     let lastKey = -1, c = null;
     for(let x=0; x<w; x++){
-      let lx, ly, ci, cj, hd;                          // hd: 0 centre .. 1 seam
-      if(hex){
-        const dax = colDa[x], dbx = colDb[x];
-        if(dax*dax + day*day <= dbx*dbx + dby*dby){ lx = dax; ly = day; ci = colIa[x]*2; cj = ja*2; }
-        else { lx = dbx; ly = dby; ci = colIb[x]*2+1; cj = jb*2+1; }
-        const au = (lx < 0 ? -lx : lx) * inv, av = (ly < 0 ? -ly : ly) * inv;
-        const hd0 = au*0.5 + av*0.8660254;
-        hd = au > hd0 ? au : hd0;
-      } else if(dia){
-        // cells live in the turned frame (p along x+y, q along x−y)
-        const p = (x + y) * R, q = (x - y + dOff) * R;
-        ci = Math.floor(p / width); cj = Math.floor(q / width);
-        const lp = p - (ci + 0.5) * width, lq = q - (cj + 0.5) * width;
-        lx = (lp + lq) * R; ly = (lp - lq) * R;
-        const ap = lp < 0 ? -lp : lp, aq = lq < 0 ? -lq : lq;
-        hd = (ap > aq ? ap : aq) * inv;
-      } else {
-        lx = colDb[x]; ly = sqDy; ci = colIb[x]; cj = sqJ;
-        const au = lx < 0 ? -lx : lx, av = ly < 0 ? -ly : ly;
-        hd = (au > av ? au : av) * inv;
-      }
+      const lx = colD[x], ly = sqDy, ci = colI[x], cj = sqJ;
+      const au = lx < 0 ? -lx : lx, av = ly < 0 ? -ly : ly;
+      const hd = (au > av ? au : av) * inv;            // 0 centre .. 1 seam
       const key = ci * 65536 + cj;
       if(key !== lastKey){ c = cell(ci, cj); lastKey = key; }
 
@@ -354,19 +302,23 @@ function applyLensCells(P, ctx, s, w, h, width, irr, seed, layout){
       const gain = 1 + g;
       // lens: slightly stronger toward the rim, like a real pressed dimple
       const bend = k * (0.85 + 0.3 * hd * hd);
-      const dx = lx * bend + c.jx, dy = ly * bend + c.jy;
+      const dx = c.jx - lx * bend, dy = c.jy - ly * bend;
       const di = ro + x*4;
       for(let ch=0; ch<3; ch++){
-        let sx = x + dx * chScale[ch], sy = y + dy * chScale[ch];
-        sx = sx < 0 ? 0 : sx > w-1 ? w-1 : sx;
-        sy = sy < 0 ? 0 : sy > h-1 ? h-1 : sy;
-        const x0 = sx|0, fr = sx - x0, y0 = sy|0, fq = sy - y0;
-        const p0 = y0*stride + x0*4 + ch;
-        const p1 = x0 < w-1 ? p0+4 : p0;
-        const dn = y0 < h-1 ? stride : 0;
-        const top = s[p0] + (s[p1]-s[p0])*fr;
-        const bot = s[p0+dn] + (s[p1+dn]-s[p0+dn])*fr;
-        const val = (top + (bot-top)*fq) * gain + sh;
+        let acc = 0;
+        for(let t=0; t<nTap; t++){
+          let sx = x + dx * chScale[ch] + tapX[t], sy = y + dy * chScale[ch] + tapY[t];
+          sx = sx < 0 ? 0 : sx > w-1 ? w-1 : sx;
+          sy = sy < 0 ? 0 : sy > h-1 ? h-1 : sy;
+          const x0 = sx|0, fr = sx - x0, y0 = sy|0, fq = sy - y0;
+          const p0 = y0*stride + x0*4 + ch;
+          const p1 = x0 < w-1 ? p0+4 : p0;
+          const dn = y0 < h-1 ? stride : 0;
+          const top = s[p0] + (s[p1]-s[p0])*fr;
+          const bot = s[p0+dn] + (s[p1+dn]-s[p0+dn])*fr;
+          acc += top + (bot-top)*fq;
+        }
+        const val = acc * tapW * gain + sh;
         o[di+ch] = val < 0 ? 0 : val > 255 ? 255 : val;
       }
       o[di+3] = 255;
@@ -393,12 +345,12 @@ export function applyFractalGlass(P, ctx, w, h){
     s = ctx.getImageData(0, 0, w, h).data;
   }
 
-  const layout = LENS_LAYOUT[P.fgPattern];
-  if(layout){
-    applyLensCells(P, ctx, s, w, h, width, irr, seed, layout);
+  if(P.fgPattern === 'grid'){
+    applyLensCells(P, ctx, s, w, h, width, irr, seed);
     return;
   }
-  if((P.fgPattern || 'vertical') !== 'vertical'){
+  // anything else (incl. patterns that no longer exist) is the vertical glass
+  if(P.fgPattern === 'pyramid' || P.fgPattern === 'wave'){
     applyRelief(P, ctx, s, w, h, width, irr, seed);
     return;
   }

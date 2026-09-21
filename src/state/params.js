@@ -26,7 +26,7 @@ export const DEFAULTS = {
   misreg: 0,
   cInk: "#00adee", mInk: "#ec008c", yInk: "#fff200", kInk: "#231f20",
   // fractal glass (ribbed-glass refraction overlay)
-  fgOn: false, fgPattern: "vertical", // vertical | reeded | horizontal | grid | pyramid | diamond | wave | honeycomb
+  fgOn: false, fgPattern: "vertical", // vertical | grid | pyramid | wave
   fgWidth: 30, fgIrregular: 0.5, fgRefract: 80,
   fgShade: 0.5, fgDispersion: 0.3, fgFrost: 6, fgFade: 0.5,
   // grunge
