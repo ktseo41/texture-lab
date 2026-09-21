@@ -13,7 +13,7 @@ A parametric web tool for generating **CMYK halftone · print grunge · grain gr
 - **CMYK halftone screening** — per-channel angles/offsets, 5 dot shapes, dot gain, jitter, edge roughness, plate misregistration
 - **Source stage** — organic color blobs (1–5 colors), linear gradient, or your own uploaded image
 - **Print grunge** — turbulence warp, CMY flecks, dust/speckle
-- **Fractal glass** — reeded-glass look: vertical ribs with refraction, chromatic dispersion, frost, and a line fade
+- **Fractal glass** — patterned-glass look with refraction, chromatic dispersion, frost, and a line fade. 8 glass patterns modelled on photos of real glass: vertical flutes (classic and relief-lit), horizontal and wavy flutes, a pyramid grid, and square / diamond / honeycomb lens cells that each repeat a small copy of the scene
 - **Film grain** — mono or chroma noise, sized 1–6 px
 - **Text layer** — drawn into the source, so it halftones/grains together with the artwork instead of sitting on top
 - **Deterministic seeds** — the same seed always renders the same texture
@@ -41,7 +41,7 @@ src/
     halftone.js    CMYK separation + per-channel rotated screens. Channel layers
                    are cached; misregistration is applied at composite time,
                    so no re-raster
-    glass.js       fractal (reeded) glass: rib refraction, dispersion, frost, line fade
+    glass.js       fractal glass: 8 patterns (flutes, pyramids, lens cells), refraction, dispersion, frost, line fade
     grain.js       film grain (noise cache) + dust / ink flecks
     pipeline.js    source → halftone → fractal glass → speckle → grain orchestration,
                    with per-stage caching
